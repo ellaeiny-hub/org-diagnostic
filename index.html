@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>אבחון ארגוני — שאלון מנהלים</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #F7F5F2;
+    --surface: #FFFFFF;
+    --text: #1A1A18;
+    --text-muted: #6B6B65;
+    --text-light: #9E9E96;
+    --accent: #2D5A3D;
+    --accent-light: #E8F0EB;
+    --accent-mid: #4A8C60;
+    --border: #E2DDD8;
+    --border-strong: #C8C2BB;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+  body {
+    font-family: 'Heebo', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 2rem 1rem 4rem;
+  }
+  .container { width: 100%; max-width: 620px; }
+  .logo-bar { text-align: center; margin-bottom: 2.5rem; padding-top: 1rem; }
+  .logo-mark {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: 13px; font-weight: 500; color: var(--text-muted);
+    letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .logo-mark::before, .logo-mark::after {
+    content: ''; display: inline-block; width: 28px; height: 2px; background: var(--accent);
+  }
+  .card {
+    background: var(--surface); border-radius: var(--radius);
+    border: 1px solid var(--border); padding: 2rem; margin-bottom: 1rem;
+    animation: fadeIn 0.3s ease;
+  }
+  .screen { display: none; }
+  .screen.active { display: block; }
+  .entry-title { font-size: 26px; font-weight: 300; margin-bottom: 0.5rem; line-height: 1.3; }
+  .entry-subtitle { font-size: 14px; color: var(--text-muted); margin-bottom: 2rem; line-height: 1.6; }
+  .field-group { margin-bottom: 1.25rem; }
+  label {
+    display: block; font-size: 12px; font-weight: 600; color: var(--text-muted);
+    letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px;
+  }
+  input[type="text"], select {
+    width: 100%; padding: 11px 14px; font-size: 15px; font-family: 'Heebo', sans-serif;
+    border: 1px solid var(--border-strong); border-radius: var(--radius-sm);
+    background: var(--bg); color: var(--text); transition: border-color 0.2s, box-shadow 0.2s; appearance: none;
+  }
+  input[type="text"]:focus, select:focus {
+    outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(45,90,61,0.1); background: white;
+  }
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B6B65' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: left 14px center; padding-left: 36px;
+  }
+  .btn-primary {
+    display: block; width: 100%; padding: 13px; font-size: 15px; font-weight: 500;
+    font-family: 'Heebo', sans-serif; background: var(--accent); color: white;
+    border: none; border-radius: var(--radius-sm); cursor: pointer;
+    transition: background 0.2s, transform 0.1s; margin-top: 1.5rem;
+  }
+  .btn-primary:hover { background: #234a32; }
+  .btn-primary:active { transform: scale(0.99); }
+  .btn-primary:disabled { background: var(--border-strong); cursor: not-allowed; }
+  .btn-secondary {
+    display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px;
+    font-size: 14px; font-family: 'Heebo', sans-serif; background: transparent;
+    color: var(--text-muted); border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm); cursor: pointer; transition: background 0.15s;
+  }
+  .btn-secondary:hover { background: var(--bg); }
+  .progress-track {
+    height: 3px; background: var(--border); border-radius: 2px; margin-bottom: 2rem; overflow: hidden;
+  }
+  .progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.4s ease; }
+  .q-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
+  .q-badge {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--accent); background: var(--accent-light); padding: 4px 10px; border-radius: 99px;
+  }
+  .q-counter { font-size: 12px; color: var(--text-light); }
+  .q-text { font-size: 18px; font-weight: 400; line-height: 1.55; color: var(--text); margin-bottom: 1.25rem; }
+  textarea {
+    width: 100%; min-height: 110px; padding: 12px 14px; font-size: 14px;
+    font-family: 'Heebo', sans-serif; line-height: 1.6; border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm); background: var(--bg); color: var(--text);
+    resize: vertical; transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  textarea:focus {
+    outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(45,90,61,0.1); background: white;
+  }
+  .nav-row { display: flex; align-items: center; justify-content: space-between; margin-top: 1.25rem; }
+  .done-icon {
+    width: 56px; height: 56px; border-radius: 50%; background: var(--accent-light);
+    display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem;
+  }
+  .done-title { font-size: 22px; font-weight: 300; text-align: center; margin-bottom: 0.5rem; }
+  .done-sub { font-size: 14px; color: var(--text-muted); text-align: center; line-height: 1.6; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="logo-bar"><span class="logo-mark">אבחון ארגוני</span></div>
+
+  <!-- Entry -->
+  <div id="screen-entry" class="screen active">
+    <div class="card">
+      <h1 class="entry-title">שאלון אבחון<br>למנהלים</h1>
+      <p class="entry-subtitle">תהליך קצר של 6 שאלות שיעזור לנו להבין את התרבות הארגונית והדינמיקה הניהולית. אין תשובות נכונות או שגויות.</p>
+      <div class="field-group">
+        <label for="inp-name">שמך המלא</label>
+        <input type="text" id="inp-name" placeholder="שם פרטי ושם משפחה" />
+      </div>
+      <div class="field-group">
+        <label for="inp-org">שם הארגון</label>
+        <input type="text" id="inp-org" placeholder="לדוגמה: חברת אלפא" />
+      </div>
+      <div class="field-group">
+        <label for="inp-level">דרגה ניהולית</label>
+        <select id="inp-level">
+          <option value="">בחר/י דרגה...</option>
+          <option value="mid">דרג המנהלים המשתתפים</option>
+          <option value="senior">דרג המנהלים הבכירים (מנהלי המשתתפים)</option>
+        </select>
+      </div>
+      <button class="btn-primary" onclick="startQuestionnaire()">התחל שאלון</button>
+    </div>
+  </div>
+
+  <!-- Questionnaire -->
+  <div id="screen-q" class="screen">
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+    <div class="card">
+      <div class="q-meta">
+        <span class="q-badge" id="q-badge">תרבות</span>
+        <span class="q-counter" id="q-counter">1 / 6</span>
+      </div>
+      <div class="q-text" id="q-text"></div>
+      <textarea id="q-answer" placeholder="כתוב/י את תשובתך כאן..."></textarea>
+      <div class="nav-row">
+        <button class="btn-secondary" id="btn-prev" onclick="prevQ()">→ הקודמת</button>
+        <button class="btn-primary" id="btn-next" style="width:auto;margin-top:0;padding:10px 28px;" onclick="nextQ()">הבאה ←</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Done -->
+  <div id="screen-done" class="screen">
+    <div class="card" style="text-align:center;padding:3rem 2rem;">
+      <div class="done-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2D5A3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
+      <h2 class="done-title">תודה על מילוי השאלון</h2>
+      <p class="done-sub">תשובותיך נשמרו בהצלחה.<br>מנהלת HR תקבל את הסיכום המלא בתום תהליך האיסוף.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const QUESTIONS = [
+  { id: 'success',       text: 'תאר/י הצלחה שחווה הצוות / העובדים שלך',                                                                                                                                   badge: 'חוזקות' },
+  { id: 'challenges',    text: 'תאר/י אתגרים ניהוליים מרכזיים שאתה/את מתמודד/ת איתם כיום',                                                                                                                badge: 'אתגרים' },
+  { id: 'culture',       text: '',                                                                                                                                                                          badge: 'תרבות ארגונית' },
+  { id: 'senior_helps',  text: 'כיצד הדרג שמעליך מסייע לך בעבודתך? תאר/י את המשאבים והצרכים שהדרג שמעליך נותן להם מענה (גם אם חלקי)',                                                                   badge: 'דרג בכיר' },
+  { id: 'senior_blocks', text: 'כיצד הדרג שמעליך מעכב אותך בעבודתך? תאר/י את המשאבים והצרכים שהדרג שמעליך לא מצליח לתת להם מענה',                                                                       badge: 'דרג בכיר' },
+  { id: 'change',        text: 'מה השינוי האחד שהיה משפר משמעותית את יעילות הניהול בארגון?',                                                                                                              badge: 'חזון' }
+];
+
+let currentQ = 0, answers = {}, managerInfo = {};
+
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+}
+
+function startQuestionnaire() {
+  const name  = document.getElementById('inp-name').value.trim();
+  const org   = document.getElementById('inp-org').value.trim();
+  const level = document.getElementById('inp-level').value;
+  if (!name || !org || !level) { alert('נא למלא את כל הפרטים'); return; }
+  managerInfo = { name, org, level };
+  QUESTIONS[2].text = 'מה המאפיינים הבולטים ביותר של התרבות הארגונית ב' + org + '?';
+  currentQ = 0; answers = {};
+  renderQ(); showScreen('q');
+}
+
+function renderQ() {
+  const q = QUESTIONS[currentQ], total = QUESTIONS.length;
+  document.getElementById('q-text').textContent    = q.text;
+  document.getElementById('q-badge').textContent   = q.badge;
+  document.getElementById('q-counter').textContent = (currentQ + 1) + ' / ' + total;
+  document.getElementById('progress-fill').style.width = ((currentQ + 1) / total * 100) + '%';
+  document.getElementById('q-answer').value        = answers[q.id] || '';
+  document.getElementById('btn-prev').style.visibility = currentQ === 0 ? 'hidden' : 'visible';
+  document.getElementById('btn-next').textContent  = currentQ === total - 1 ? 'שמור וסיים ✓' : 'הבאה ←';
+  document.getElementById('q-answer').focus();
+}
+
+async function nextQ() {
+  const val = document.getElementById('q-answer').value.trim();
+  if (!val) { alert('נא לענות על השאלה לפני המעבר'); return; }
+  answers[QUESTIONS[currentQ].id] = val;
+  if (currentQ === QUESTIONS.length - 1) {
+    document.getElementById('btn-next').disabled = true;
+    document.getElementById('btn-next').textContent = 'שומר...';
+    try {
+      await fetch('/api/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ manager: managerInfo, answers, timestamp: new Date().toISOString() })
+      });
+    } catch(e) { console.error(e); }
+    showScreen('done');
+  } else {
+    currentQ++; renderQ();
+  }
+}
+
+function prevQ() {
+  answers[QUESTIONS[currentQ].id] = document.getElementById('q-answer').value.trim();
+  currentQ--; renderQ();
+}
+</script>
+</body>
+</html>

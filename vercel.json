@@ -1,0 +1,8 @@
+{
+  "version": 2,
+  "rewrites": [
+    { "source": "/hr", "destination": "/hr.html" },
+    { "source": "/api/save", "destination": "/api/save.js" },
+    { "source": "/api/responses", "destination": "/api/responses.js" }
+  ]
+}

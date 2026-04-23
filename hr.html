@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>אבחון ארגוני — דשבורד HR</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #F7F5F2; --surface: #FFFFFF; --text: #1A1A18;
+    --text-muted: #6B6B65; --text-light: #9E9E96;
+    --accent: #2D5A3D; --accent-light: #E8F0EB;
+    --amber: #8C6A1A; --amber-light: #F5EDD8;
+    --coral: #8C3A2A; --coral-light: #F5E8E5;
+    --blue: #1A4A6B; --blue-light: #E5EEF5;
+    --border: #E2DDD8; --border-strong: #C8C2BB;
+    --radius: 12px; --radius-sm: 8px;
+  }
+  body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  .header {
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 10;
+  }
+  .header-title { font-size: 15px; font-weight: 600; }
+  .header-sub { font-size: 12px; color: var(--text-light); margin-top: 1px; }
+  .logo-mark { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-light); }
+  .main { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+  .spinner {
+    width: 32px; height: 32px; border: 2px solid var(--border);
+    border-top-color: var(--accent); border-radius: 50%;
+    animation: spin 0.7s linear infinite; margin: 0 auto 1rem;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #loading-state { text-align: center; padding: 5rem 2rem; }
+  #loading-state p { font-size: 14px; color: var(--text-muted); }
+  #empty-state { display: none; text-align: center; padding: 5rem 2rem; }
+  #empty-state h2 { font-size: 20px; font-weight: 400; margin-bottom: 0.5rem; }
+  #empty-state p { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+  #dashboard { display: none; }
+  .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; }
+  .stat-label { font-size: 12px; color: var(--text-light); margin-bottom: 4px; }
+  .stat-value { font-size: 28px; font-weight: 300; }
+  .stat-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.5rem; }
+  .panel-title {
+    font-size: 14px; font-weight: 600; margin-bottom: 1rem;
+    padding-bottom: 0.75rem; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .panel-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .tab-bar { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; }
+  .tab-btn {
+    padding: 10px 20px; font-size: 13px; font-family: 'Heebo', sans-serif;
+    background: none; border: none; border-bottom: 2px solid transparent;
+    color: var(--text-muted); cursor: pointer; margin-bottom: -1px; transition: color 0.15s;
+  }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 500; }
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
+  .response-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
+  .response-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); }
+  .response-name { font-size: 14px; font-weight: 600; }
+  .level-badge { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 99px; }
+  .badge-mid { background: var(--blue-light); color: var(--blue); }
+  .badge-senior { background: var(--accent-light); color: var(--accent); }
+  .response-qa { margin-bottom: 0.75rem; }
+  .response-q { font-size: 11px; font-weight: 600; color: var(--text-light); letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 3px; }
+  .response-a { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+  /* Export box */
+  .export-box {
+    background: #FFFDF5; border: 1.5px solid #D4A84B; border-radius: var(--radius);
+    padding: 1.5rem; margin-bottom: 1.5rem;
+  }
+  .export-title { font-size: 14px; font-weight: 600; color: var(--amber); margin-bottom: 0.5rem; }
+  .export-sub { font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 1rem; }
+  .export-steps { font-size: 13px; color: var(--text); line-height: 2; margin-bottom: 1rem; }
+  .export-steps li { margin-right: 1rem; }
+  .btn-export {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 20px; font-size: 14px; font-weight: 500; font-family: 'Heebo', sans-serif;
+    background: var(--amber); color: white; border: none; border-radius: var(--radius-sm);
+    cursor: pointer; transition: background 0.2s;
+  }
+  .btn-export:hover { background: #7a5a14; }
+  .prompt-box {
+    display: none; background: var(--bg); border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm); padding: 1rem; margin-top: 1rem;
+    font-size: 12px; color: var(--text-muted); line-height: 1.7;
+    white-space: pre-wrap; max-height: 200px; overflow-y: auto;
+  }
+  .btn-copy {
+    display: inline-flex; align-items: center; gap: 6px; margin-top: 0.75rem;
+    padding: 8px 16px; font-size: 13px; font-family: 'Heebo', sans-serif;
+    background: transparent; color: var(--text-muted); border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm); cursor: pointer; transition: background 0.15s;
+  }
+  .btn-copy:hover { background: var(--surface); }
+  .btn-refresh {
+    display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px;
+    font-size: 12px; font-family: 'Heebo', sans-serif; background: transparent;
+    color: var(--text-muted); border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm); cursor: pointer; transition: background 0.15s;
+  }
+  .btn-refresh:hover { background: var(--bg); }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  .panel, .response-card, .stat-card { animation: fadeIn 0.3s ease; }
+  @media (max-width: 640px) { .stats-row { grid-template-columns: 1fr 1fr; } }
+</style>
+</head>
+<body>
+<div class="header">
+  <div>
+    <div class="header-title">דשבורד HR — אבחון ארגוני</div>
+    <div class="header-sub" id="header-org">טוען נתונים...</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <button class="btn-refresh" onclick="loadData()">↻ רענן</button>
+    <span class="logo-mark">אבחון ארגוני</span>
+  </div>
+</div>
+
+<div class="main">
+  <div id="loading-state">
+    <div class="spinner"></div>
+    <p>טוען תשובות...</p>
+  </div>
+
+  <div id="empty-state">
+    <h2>טרם נאספו תשובות</h2>
+    <p>שלחי את קישור השאלון למנהלים.<br>הנתונים יופיעו כאן ברגע שהם ימלאו.</p>
+  </div>
+
+  <div id="dashboard">
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">סה"כ ממלאים</div>
+        <div class="stat-value" id="stat-total">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">דרג מנהלים</div>
+        <div class="stat-value" id="stat-mid">0</div>
+        <div class="stat-sub">דרג המשתתפים</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">דרג בכיר</div>
+        <div class="stat-value" id="stat-senior">0</div>
+        <div class="stat-sub">מנהלי המשתתפים</div>
+      </div>
+    </div>
+
+    <!-- Export to Claude box -->
+    <div class="export-box">
+      <div class="export-title">✦ ניתוח AI עם Claude</div>
+      <div class="export-sub">לקבלת ניתוח מעמיק של כל התשובות, לחצי על הכפתור — תקבלי טקסט מוכן להדבקה ב-Claude.ai</div>
+      <button class="btn-export" onclick="generatePrompt()">הכן טקסט לניתוח Claude ←</button>
+      <div class="prompt-box" id="prompt-box"></div>
+      <div id="copy-row" style="display:none;">
+        <button class="btn-copy" onclick="copyPrompt()">העתק טקסט</button>
+        <span style="font-size:12px;color:var(--text-light);margin-right:10px;">← הדביקי ב-claude.ai בשיחה חדשה</span>
+      </div>
+    </div>
+
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('tab-responses', event)">תשובות גולמיות</button>
+    </div>
+    <div id="tab-responses" class="tab-pane active">
+      <div id="responses-list"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const Q_LABELS = {
+  success:       'הצלחת הצוות',
+  challenges:    'אתגרים ניהוליים',
+  culture:       'תרבות ארגונית',
+  senior_helps:  'סיוע הדרג הבכיר',
+  senior_blocks: 'עיכובים מהדרג הבכיר',
+  change:        'שינוי מרכזי נדרש'
+};
+
+let allResponses = [];
+
+async function loadData() {
+  document.getElementById('loading-state').style.display = 'block';
+  document.getElementById('empty-state').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'none';
+  try {
+    const res = await fetch('/api/responses');
+    const data = await res.json();
+    allResponses = data.responses || [];
+    document.getElementById('loading-state').style.display = 'none';
+    if (allResponses.length === 0) {
+      document.getElementById('empty-state').style.display = 'block';
+      return;
+    }
+    document.getElementById('dashboard').style.display = 'block';
+    const org = allResponses[0]?.manager?.org || 'הארגון';
+    document.getElementById('header-org').textContent = org + ' — ' + new Date().toLocaleDateString('he-IL');
+    const mid    = allResponses.filter(r => r.manager.level === 'mid').length;
+    const senior = allResponses.filter(r => r.manager.level === 'senior').length;
+    document.getElementById('stat-total').textContent  = allResponses.length;
+    document.getElementById('stat-mid').textContent    = mid;
+    document.getElementById('stat-senior').textContent = senior;
+    renderResponses(allResponses);
+  } catch(e) {
+    document.getElementById('loading-state').innerHTML = '<p style="color:#8C3A2A">שגיאה בטעינת הנתונים. נסי לרענן.</p>';
+  }
+}
+
+function renderResponses(all) {
+  const el = document.getElementById('responses-list');
+  el.innerHTML = '';
+  all.forEach(r => {
+    const div = document.createElement('div');
+    div.className = 'response-card';
+    const levelLabel = r.manager.level === 'mid' ? 'דרג המנהלים' : 'דרג בכיר';
+    const badgeClass = r.manager.level === 'mid' ? 'badge-mid' : 'badge-senior';
+    let qaHtml = '';
+    Object.entries(r.answers || {}).forEach(([key, val]) => {
+      if (val && Q_LABELS[key]) {
+        qaHtml += `<div class="response-qa"><div class="response-q">${Q_LABELS[key]}</div><div class="response-a">${val}</div></div>`;
+      }
+    });
+    div.innerHTML = `
+      <div class="response-header">
+        <span class="response-name">${r.manager.name}</span>
+        <span class="level-badge ${badgeClass}">${levelLabel}</span>
+      </div>${qaHtml}`;
+    el.appendChild(div);
+  });
+}
+
+function generatePrompt() {
+  if (allResponses.length === 0) return;
+  const org  = allResponses[0]?.manager?.org || 'הארגון';
+  const mid    = allResponses.filter(r => r.manager.level === 'mid');
+  const senior = allResponses.filter(r => r.manager.level === 'senior');
+
+  const formatGroup = (group, label) => {
+    if (group.length === 0) return '';
+    return `\n=== ${label} (${group.length} משיבים) ===\n` +
+      group.map(r =>
+        `\nמנהל/ת: ${r.manager.name}\n` +
+        Object.entries(r.answers || {}).map(([k, v]) => `${Q_LABELS[k] || k}: ${v}`).join('\n')
+      ).join('\n---\n');
+  };
+
+  const dataText = formatGroup(mid, 'דרג המנהלים המשתתפים') + '\n' + formatGroup(senior, 'דרג המנהלים הבכירים');
+
+  const prompt = `אתה יועצת ארגונית מנוסה. להלן תשובות שאלוני אבחון שנאספו מ${allResponses.length} מנהלים ב${org}.
+
+אנא כתבי שני חלקים:
+
+חלק א׳ — ניתוח כולל (כחצי עמוד):
+• תרבות ארגונית — מה עולה מהתשובות על האופי והנורמות של הארגון
+• חוזקות ניהוליות — מה עובד טוב בדרג המנהלים
+• פערים ניהוליים — אתגרים ודפוסים חוזרים
+• חוזקות הדרג הבכיר — מה הם נותנים
+• פערים הדרג הבכיר — מה חסר
+• המלצה מרכזית אחת לתהליך הפיתוח
+
+חלק ב׳ — ניתוח לפי דרג (כחצי עמוד):
+עבור כל דרג בנפרד: חוזקות, פערים, דינמיקה מול הדרג הבכיר.
+
+היי ממוקדת ומעשית. הימני מסיכום טריוויאלי — תני תובנות שיעזרו לתכנן את תוכנית הפיתוח.
+
+להלן התשובות:
+${dataText}`;
+
+  const box = document.getElementById('prompt-box');
+  box.textContent = prompt;
+  box.style.display = 'block';
+  document.getElementById('copy-row').style.display = 'block';
+}
+
+function copyPrompt() {
+  const text = document.getElementById('prompt-box').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.btn-copy');
+    btn.textContent = '✓ הועתק!';
+    setTimeout(() => btn.textContent = 'העתק טקסט', 2000);
+  });
+}
+
+function switchTab(tabId, e) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+  if (e) e.target.classList.add('active');
+}
+
+loadData();
+</script>
+</body>
+</html>
