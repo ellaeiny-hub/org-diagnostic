@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>אבחון ארגוני — דשבורד HR</title>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -12,26 +13,18 @@
     --text-muted: #6B6B65; --text-light: #9E9E96;
     --accent: #2D5A3D; --accent-light: #E8F0EB;
     --amber: #8C6A1A; --amber-light: #F5EDD8;
-    --coral: #8C3A2A; --coral-light: #F5E8E5;
     --blue: #1A4A6B; --blue-light: #E5EEF5;
+    --coral: #8C3A2A; --coral-light: #F5E8E5;
     --border: #E2DDD8; --border-strong: #C8C2BB;
     --radius: 12px; --radius-sm: 8px;
   }
   body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-  .header {
-    background: var(--surface); border-bottom: 1px solid var(--border);
-    padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between;
-    position: sticky; top: 0; z-index: 10;
-  }
+  .header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
   .header-title { font-size: 15px; font-weight: 600; }
   .header-sub { font-size: 12px; color: var(--text-light); margin-top: 1px; }
   .logo-mark { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-light); }
-  .main { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
-  .spinner {
-    width: 32px; height: 32px; border: 2px solid var(--border);
-    border-top-color: var(--accent); border-radius: 50%;
-    animation: spin 0.7s linear infinite; margin: 0 auto 1rem;
-  }
+  .main { max-width: 1000px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+  .spinner { width: 32px; height: 32px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; margin: 0 auto 1rem; }
   @keyframes spin { to { transform: rotate(360deg); } }
   #loading-state { text-align: center; padding: 5rem 2rem; }
   #loading-state p { font-size: 14px; color: var(--text-muted); }
@@ -45,18 +38,11 @@
   .stat-value { font-size: 28px; font-weight: 300; }
   .stat-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
   .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.5rem; }
-  .panel-title {
-    font-size: 14px; font-weight: 600; margin-bottom: 1rem;
-    padding-bottom: 0.75rem; border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; gap: 8px;
-  }
+  .panel-title { font-size: 14px; font-weight: 600; margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
   .panel-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
   .tab-bar { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; }
-  .tab-btn {
-    padding: 10px 20px; font-size: 13px; font-family: 'Heebo', sans-serif;
-    background: none; border: none; border-bottom: 2px solid transparent;
-    color: var(--text-muted); cursor: pointer; margin-bottom: -1px; transition: color 0.15s;
-  }
+  .tab-btn { padding: 10px 20px; font-size: 13px; font-family: 'Heebo', sans-serif; background: none; border: none; border-bottom: 2px solid transparent; color: var(--text-muted); cursor: pointer; margin-bottom: -1px; }
   .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 500; }
   .tab-pane { display: none; }
   .tab-pane.active { display: block; }
@@ -69,46 +55,23 @@
   .response-qa { margin-bottom: 0.75rem; }
   .response-q { font-size: 11px; font-weight: 600; color: var(--text-light); letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 3px; }
   .response-a { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
-
-  /* Export box */
-  .export-box {
-    background: #FFFDF5; border: 1.5px solid #D4A84B; border-radius: var(--radius);
-    padding: 1.5rem; margin-bottom: 1.5rem;
-  }
-  .export-title { font-size: 14px; font-weight: 600; color: var(--amber); margin-bottom: 0.5rem; }
-  .export-sub { font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 1rem; }
-  .export-steps { font-size: 13px; color: var(--text); line-height: 2; margin-bottom: 1rem; }
-  .export-steps li { margin-right: 1rem; }
-  .btn-export {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 10px 20px; font-size: 14px; font-weight: 500; font-family: 'Heebo', sans-serif;
-    background: var(--amber); color: white; border: none; border-radius: var(--radius-sm);
-    cursor: pointer; transition: background 0.2s;
-  }
-  .btn-export:hover { background: #7a5a14; }
-  .prompt-box {
-    display: none; background: var(--bg); border: 1px solid var(--border-strong);
-    border-radius: var(--radius-sm); padding: 1rem; margin-top: 1rem;
-    font-size: 12px; color: var(--text-muted); line-height: 1.7;
-    white-space: pre-wrap; max-height: 200px; overflow-y: auto;
-  }
-  .btn-copy {
-    display: inline-flex; align-items: center; gap: 6px; margin-top: 0.75rem;
-    padding: 8px 16px; font-size: 13px; font-family: 'Heebo', sans-serif;
-    background: transparent; color: var(--text-muted); border: 1px solid var(--border-strong);
-    border-radius: var(--radius-sm); cursor: pointer; transition: background 0.15s;
-  }
-  .btn-copy:hover { background: var(--surface); }
-  .btn-refresh {
-    display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px;
-    font-size: 12px; font-family: 'Heebo', sans-serif; background: transparent;
-    color: var(--text-muted); border: 1px solid var(--border-strong);
-    border-radius: var(--radius-sm); cursor: pointer; transition: background 0.15s;
-  }
+  .btn-refresh { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; font-size: 12px; font-family: 'Heebo', sans-serif; background: transparent; color: var(--text-muted); border: 1px solid var(--border-strong); border-radius: var(--radius-sm); cursor: pointer; }
   .btn-refresh:hover { background: var(--bg); }
+  .chart-wrap { position: relative; height: 220px; }
+  .keywords-cloud { display: flex; flex-wrap: wrap; gap: 6px; }
+  .kw-tag { font-size: 12px; padding: 4px 10px; border-radius: 99px; font-weight: 500; }
+  .kw-green { background: var(--accent-light); color: var(--accent); }
+  .kw-amber { background: var(--amber-light); color: var(--amber); }
+  .kw-blue { background: var(--blue-light); color: var(--blue); }
+  .kw-coral { background: var(--coral-light); color: var(--coral); }
+  .section-divider { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-light); margin: 1.5rem 0 0.75rem; }
+  .insight-row { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+  .insight-row:last-child { border: none; }
+  .insight-dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+  .insight-text { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+  @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } .stats-row { grid-template-columns: 1fr 1fr; } }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
   .panel, .response-card, .stat-card { animation: fadeIn 0.3s ease; }
-  @media (max-width: 640px) { .stats-row { grid-template-columns: 1fr 1fr; } }
 </style>
 </head>
 <body>
@@ -124,11 +87,7 @@
 </div>
 
 <div class="main">
-  <div id="loading-state">
-    <div class="spinner"></div>
-    <p>טוען תשובות...</p>
-  </div>
-
+  <div id="loading-state"><div class="spinner"></div><p>טוען תשובות...</p></div>
   <div id="empty-state">
     <h2>טרם נאספו תשובות</h2>
     <p>שלחי את קישור השאלון למנהלים.<br>הנתונים יופיעו כאן ברגע שהם ימלאו.</p>
@@ -136,54 +95,87 @@
 
   <div id="dashboard">
     <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-label">סה"כ ממלאים</div>
-        <div class="stat-value" id="stat-total">0</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">דרג מנהלים</div>
-        <div class="stat-value" id="stat-mid">0</div>
-        <div class="stat-sub">דרג המשתתפים</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">דרג בכיר</div>
-        <div class="stat-value" id="stat-senior">0</div>
-        <div class="stat-sub">מנהלי המשתתפים</div>
-      </div>
-    </div>
-
-    <!-- Export to Claude box -->
-    <div class="export-box">
-      <div class="export-title">✦ ניתוח AI עם Claude</div>
-      <div class="export-sub">לקבלת ניתוח מעמיק של כל התשובות, לחצי על הכפתור — תקבלי טקסט מוכן להדבקה ב-Claude.ai</div>
-      <button class="btn-export" onclick="generatePrompt()">הכן טקסט לניתוח Claude ←</button>
-      <div class="prompt-box" id="prompt-box"></div>
-      <div id="copy-row" style="display:none;">
-        <button class="btn-copy" onclick="copyPrompt()">העתק טקסט</button>
-        <span style="font-size:12px;color:var(--text-light);margin-right:10px;">← הדביקי ב-claude.ai בשיחה חדשה</span>
-      </div>
+      <div class="stat-card"><div class="stat-label">סה"כ ממלאים</div><div class="stat-value" id="stat-total">0</div></div>
+      <div class="stat-card"><div class="stat-label">דרג מנהלים</div><div class="stat-value" id="stat-mid">0</div><div class="stat-sub">דרג המשתתפים</div></div>
+      <div class="stat-card"><div class="stat-label">דרג בכיר</div><div class="stat-value" id="stat-senior">0</div><div class="stat-sub">מנהלי המשתתפים</div></div>
     </div>
 
     <div class="tab-bar">
-      <button class="tab-btn active" onclick="switchTab('tab-responses', event)">תשובות גולמיות</button>
+      <button class="tab-btn active" onclick="switchTab('tab-visual', event)">ויזואליזציה</button>
+      <button class="tab-btn" onclick="switchTab('tab-responses', event)">תשובות גולמיות</button>
     </div>
-    <div id="tab-responses" class="tab-pane active">
+
+    <div id="tab-visual" class="tab-pane active">
+
+      <!-- Donut -->
+      <div class="panel">
+        <div class="panel-title"><span class="panel-dot" style="background:var(--accent)"></span>התפלגות משיבים לפי דרג</div>
+        <div style="display:flex;align-items:center;gap:2rem;flex-wrap:wrap;">
+          <div style="width:180px;height:180px;flex-shrink:0;margin:0 auto;"><canvas id="chart-levels"></canvas></div>
+          <div id="level-legend" style="flex:1;min-width:180px;"></div>
+        </div>
+      </div>
+
+      <div class="section-divider">ניתוח לפי נושאים — כלל המשיבים</div>
+
+      <div class="two-col">
+        <div class="panel">
+          <div class="panel-title"><span class="panel-dot" style="background:#4A8C60"></span>חוזקות — מילות מפתח</div>
+          <div id="keywords-strengths" class="keywords-cloud"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-title"><span class="panel-dot" style="background:var(--amber)"></span>אתגרים — מילות מפתח</div>
+          <div id="keywords-challenges" class="keywords-cloud"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title"><span class="panel-dot" style="background:var(--blue)"></span>תרבות ארגונית — מאפיינים עיקריים</div>
+        <div id="keywords-culture" class="keywords-cloud"></div>
+      </div>
+
+      <div class="two-col">
+        <div class="panel">
+          <div class="panel-title"><span class="panel-dot" style="background:#4A8C60"></span>הדרג הבכיר — תורם</div>
+          <div id="keywords-senior-helps" class="keywords-cloud"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-title"><span class="panel-dot" style="background:var(--coral)"></span>הדרג הבכיר — מעכב</div>
+          <div id="keywords-senior-blocks" class="keywords-cloud"></div>
+        </div>
+      </div>
+
+      <div class="section-divider">השוואה בין דרגים</div>
+
+      <div class="two-col">
+        <div class="panel">
+          <div class="panel-title"><span class="panel-dot" style="background:var(--blue)"></span>דרג המנהלים המשתתפים</div>
+          <div class="chart-wrap"><canvas id="chart-mid"></canvas></div>
+        </div>
+        <div class="panel">
+          <div class="panel-title"><span class="panel-dot" style="background:var(--accent)"></span>דרג המנהלים הבכירים</div>
+          <div class="chart-wrap"><canvas id="chart-senior"></canvas></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title"><span class="panel-dot" style="background:var(--amber)"></span>שינויים נדרשים — מה המנהלים מבקשים</div>
+        <div id="changes-list"></div>
+      </div>
+
+    </div>
+
+    <div id="tab-responses" class="tab-pane">
       <div id="responses-list"></div>
     </div>
   </div>
 </div>
 
 <script>
-const Q_LABELS = {
-  success:       'הצלחת הצוות',
-  challenges:    'אתגרים ניהוליים',
-  culture:       'תרבות ארגונית',
-  senior_helps:  'סיוע הדרג הבכיר',
-  senior_blocks: 'עיכובים מהדרג הבכיר',
-  change:        'שינוי מרכזי נדרש'
-};
+const Q_LABELS = { success:'חוזקות הצוות', challenges:'אתגרים ניהוליים', culture:'תרבות ארגונית', senior_helps:'סיוע הדרג הבכיר', senior_blocks:'עיכובים מהדרג הבכיר', change:'שינוי נדרש' };
+const STOPWORDS = new Set(['את','אני','הוא','היא','הם','הן','אנחנו','של','עם','על','אל','לא','כן','רק','גם','כי','אם','אבל','זה','זו','זאת','לי','לו','לה','לנו','שלי','שלו','שלה','שלנו','ב','ל','מ','כ','ו','ה','אך','כל','יש','אין','היה','היתה','כבר','עוד','מאוד','מאד','טוב','רב','בין','כך','פה','שם','שתי','שני','כך','גם','כן','רב','יותר','פחות','כמו','אחרי','לפני','עכשיו','כאן','שם','מה','מי','איך','למה','כאשר','שהוא','שהיא','שהם','אותו','אותה','אותם','אנחנו','אתם','אתן','הייתי','היינו','יהיה','תהיה','אחד','אחת','כל','כולם']);
 
-let allResponses = [];
+let allResponses = [], charts = {};
 
 async function loadData() {
   document.getElementById('loading-state').style.display = 'block';
@@ -194,22 +186,94 @@ async function loadData() {
     const data = await res.json();
     allResponses = data.responses || [];
     document.getElementById('loading-state').style.display = 'none';
-    if (allResponses.length === 0) {
-      document.getElementById('empty-state').style.display = 'block';
-      return;
-    }
+    if (allResponses.length === 0) { document.getElementById('empty-state').style.display = 'block'; return; }
     document.getElementById('dashboard').style.display = 'block';
     const org = allResponses[0]?.manager?.org || 'הארגון';
     document.getElementById('header-org').textContent = org + ' — ' + new Date().toLocaleDateString('he-IL');
-    const mid    = allResponses.filter(r => r.manager.level === 'mid').length;
-    const senior = allResponses.filter(r => r.manager.level === 'senior').length;
-    document.getElementById('stat-total').textContent  = allResponses.length;
-    document.getElementById('stat-mid').textContent    = mid;
-    document.getElementById('stat-senior').textContent = senior;
+    const mid = allResponses.filter(r => r.manager.level === 'mid');
+    const senior = allResponses.filter(r => r.manager.level === 'senior');
+    document.getElementById('stat-total').textContent = allResponses.length;
+    document.getElementById('stat-mid').textContent = mid.length;
+    document.getElementById('stat-senior').textContent = senior.length;
+    renderVisuals(allResponses, mid, senior);
     renderResponses(allResponses);
   } catch(e) {
     document.getElementById('loading-state').innerHTML = '<p style="color:#8C3A2A">שגיאה בטעינת הנתונים. נסי לרענן.</p>';
   }
+}
+
+function extractKeywords(responses, field) {
+  const text = responses.map(r => r.answers?.[field] || '').join(' ');
+  const words = text.replace(/[.,!?;:״׳"'()[\]]/g, '').split(/\s+/);
+  const freq = {};
+  words.forEach(w => { if (w.length > 2 && !STOPWORDS.has(w)) freq[w] = (freq[w]||0)+1; });
+  return Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,16);
+}
+
+function renderKeywords(elId, responses, field, colorClass) {
+  const el = document.getElementById(elId);
+  const kws = extractKeywords(responses, field);
+  if (!kws.length) { el.innerHTML='<span style="font-size:13px;color:var(--text-light)">אין נתונים עדיין</span>'; return; }
+  el.innerHTML = kws.map(([w,c]) => `<span class="kw-tag ${colorClass}" style="font-size:${Math.min(15,10+c*1.2)}px">${w}</span>`).join('');
+}
+
+function renderVisuals(all, mid, senior) {
+  Object.values(charts).forEach(c => { try { c.destroy(); } catch(e){} });
+  charts = {};
+
+  const ctx1 = document.getElementById('chart-levels').getContext('2d');
+  charts.levels = new Chart(ctx1, {
+    type: 'doughnut',
+    data: { labels:['דרג המנהלים','דרג בכיר'], datasets:[{ data:[mid.length, senior.length], backgroundColor:['#1A4A6B','#2D5A3D'], borderWidth:0 }] },
+    options: { cutout:'70%', plugins:{ legend:{ display:false } }, responsive:true, maintainAspectRatio:false }
+  });
+
+  document.getElementById('level-legend').innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:12px;height:12px;border-radius:50%;background:#1A4A6B;flex-shrink:0;"></div>
+        <div><div style="font-size:13px;font-weight:500;color:var(--text-muted)">דרג המנהלים המשתתפים</div><div style="font-size:24px;font-weight:300;">${mid.length} משיבים</div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:12px;height:12px;border-radius:50%;background:#2D5A3D;flex-shrink:0;"></div>
+        <div><div style="font-size:13px;font-weight:500;color:var(--text-muted)">דרג המנהלים הבכירים</div><div style="font-size:24px;font-weight:300;">${senior.length} משיבים</div></div>
+      </div>
+    </div>`;
+
+  renderKeywords('keywords-strengths', all, 'success', 'kw-green');
+  renderKeywords('keywords-challenges', all, 'challenges', 'kw-amber');
+  renderKeywords('keywords-culture', all, 'culture', 'kw-blue');
+  renderKeywords('keywords-senior-helps', all, 'senior_helps', 'kw-green');
+  renderKeywords('keywords-senior-blocks', all, 'senior_blocks', 'kw-coral');
+
+  const radarLabels = ['חוזקות','אתגרים','תרבות','תמיכת\nדרג בכיר','חסמי\nדרג בכיר'];
+  const radarScore = (group, field) => group.length === 0 ? 0 : Math.min(10, Math.round(group.reduce((s,r) => s+(r.answers?.[field]?.length||0)/25, 0)/group.length*2));
+  const radarData = (group) => ['success','challenges','culture','senior_helps','senior_blocks'].map(f => radarScore(group, f));
+
+  const makeRadar = (canvasId, data, color) => {
+    const el = document.getElementById(canvasId);
+    if (!el) return;
+    const ctx = el.getContext('2d');
+    charts[canvasId] = new Chart(ctx, {
+      type: 'radar',
+      data: { labels: radarLabels, datasets:[{ data, backgroundColor: color+'22', borderColor: color, borderWidth:2, pointBackgroundColor: color, pointRadius:3 }] },
+      options: { responsive:true, maintainAspectRatio:false, scales:{ r:{ min:0, max:10, ticks:{ display:false }, grid:{ color:'#E2DDD8' }, pointLabels:{ font:{ size:11, family:'Heebo' }, color:'#6B6B65' } } }, plugins:{ legend:{ display:false } } }
+    });
+  };
+
+  if (mid.length > 0) makeRadar('chart-mid', radarData(mid), '#1A4A6B');
+  else document.getElementById('chart-mid').parentElement.innerHTML = '<p style="font-size:13px;color:var(--text-light);text-align:center;padding:2rem;">אין נתונים לדרג זה</p>';
+
+  if (senior.length > 0) makeRadar('chart-senior', radarData(senior), '#2D5A3D');
+  else document.getElementById('chart-senior').parentElement.innerHTML = '<p style="font-size:13px;color:var(--text-light);text-align:center;padding:2rem;">אין נתונים לדרג זה</p>';
+
+  const changeEl = document.getElementById('changes-list');
+  const changes = all.map(r => ({ name:r.manager.name, level:r.manager.level, text:r.answers?.change||'' })).filter(c=>c.text);
+  changeEl.innerHTML = changes.map(c => `
+    <div class="insight-row">
+      <div class="insight-dot" style="background:${c.level==='mid'?'#1A4A6B':'#2D5A3D'}"></div>
+      <div class="insight-text"><strong style="font-size:12px;color:var(--text-muted);">${c.name} · ${c.level==='mid'?'דרג מנהלים':'דרג בכיר'}</strong><br>${c.text}</div>
+    </div>`).join('') || '<p style="font-size:13px;color:var(--text-light)">אין נתונים עדיין</p>';
 }
 
 function renderResponses(all) {
@@ -218,80 +282,20 @@ function renderResponses(all) {
   all.forEach(r => {
     const div = document.createElement('div');
     div.className = 'response-card';
-    const levelLabel = r.manager.level === 'mid' ? 'דרג המנהלים' : 'דרג בכיר';
-    const badgeClass = r.manager.level === 'mid' ? 'badge-mid' : 'badge-senior';
-    let qaHtml = '';
-    Object.entries(r.answers || {}).forEach(([key, val]) => {
-      if (val && Q_LABELS[key]) {
-        qaHtml += `<div class="response-qa"><div class="response-q">${Q_LABELS[key]}</div><div class="response-a">${val}</div></div>`;
-      }
-    });
-    div.innerHTML = `
-      <div class="response-header">
-        <span class="response-name">${r.manager.name}</span>
-        <span class="level-badge ${badgeClass}">${levelLabel}</span>
-      </div>${qaHtml}`;
+    const ll = r.manager.level==='mid'?'דרג המנהלים':'דרג בכיר';
+    const bc = r.manager.level==='mid'?'badge-mid':'badge-senior';
+    let qa = '';
+    Object.entries(r.answers||{}).forEach(([k,v]) => { if(v&&Q_LABELS[k]) qa+=`<div class="response-qa"><div class="response-q">${Q_LABELS[k]}</div><div class="response-a">${v}</div></div>`; });
+    div.innerHTML = `<div class="response-header"><span class="response-name">${r.manager.name}</span><span class="level-badge ${bc}">${ll}</span></div>${qa}`;
     el.appendChild(div);
   });
 }
 
-function generatePrompt() {
-  if (allResponses.length === 0) return;
-  const org  = allResponses[0]?.manager?.org || 'הארגון';
-  const mid    = allResponses.filter(r => r.manager.level === 'mid');
-  const senior = allResponses.filter(r => r.manager.level === 'senior');
-
-  const formatGroup = (group, label) => {
-    if (group.length === 0) return '';
-    return `\n=== ${label} (${group.length} משיבים) ===\n` +
-      group.map(r =>
-        `\nמנהל/ת: ${r.manager.name}\n` +
-        Object.entries(r.answers || {}).map(([k, v]) => `${Q_LABELS[k] || k}: ${v}`).join('\n')
-      ).join('\n---\n');
-  };
-
-  const dataText = formatGroup(mid, 'דרג המנהלים המשתתפים') + '\n' + formatGroup(senior, 'דרג המנהלים הבכירים');
-
-  const prompt = `אתה יועצת ארגונית מנוסה. להלן תשובות שאלוני אבחון שנאספו מ${allResponses.length} מנהלים ב${org}.
-
-אנא כתבי שני חלקים:
-
-חלק א׳ — ניתוח כולל (כחצי עמוד):
-• תרבות ארגונית — מה עולה מהתשובות על האופי והנורמות של הארגון
-• חוזקות ניהוליות — מה עובד טוב בדרג המנהלים
-• פערים ניהוליים — אתגרים ודפוסים חוזרים
-• חוזקות הדרג הבכיר — מה הם נותנים
-• פערים הדרג הבכיר — מה חסר
-• המלצה מרכזית אחת לתהליך הפיתוח
-
-חלק ב׳ — ניתוח לפי דרג (כחצי עמוד):
-עבור כל דרג בנפרד: חוזקות, פערים, דינמיקה מול הדרג הבכיר.
-
-היי ממוקדת ומעשית. הימני מסיכום טריוויאלי — תני תובנות שיעזרו לתכנן את תוכנית הפיתוח.
-
-להלן התשובות:
-${dataText}`;
-
-  const box = document.getElementById('prompt-box');
-  box.textContent = prompt;
-  box.style.display = 'block';
-  document.getElementById('copy-row').style.display = 'block';
-}
-
-function copyPrompt() {
-  const text = document.getElementById('prompt-box').textContent;
-  navigator.clipboard.writeText(text).then(() => {
-    const btn = document.querySelector('.btn-copy');
-    btn.textContent = '✓ הועתק!';
-    setTimeout(() => btn.textContent = 'העתק טקסט', 2000);
-  });
-}
-
 function switchTab(tabId, e) {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
   document.getElementById(tabId).classList.add('active');
-  if (e) e.target.classList.add('active');
+  if(e) e.target.classList.add('active');
 }
 
 loadData();
