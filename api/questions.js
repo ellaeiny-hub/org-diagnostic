@@ -13,10 +13,12 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
+
   try {
     const url = process.env.KV_REST_API_URL;
     const token = process.env.KV_REST_API_TOKEN;
     const code = req.query.org || 'default';
+
     const r = await fetch(url, {
       method: 'POST',
       headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
@@ -24,7 +26,18 @@ export default async function handler(req, res) {
     });
     const data = await r.json();
     const questions = data.result ? JSON.parse(data.result) : DEFAULT_QUESTIONS;
-    return res.status(200).json({ questions });
+
+    // Also get org name
+    const orgRes = await fetch(url, {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+      body: JSON.stringify(['GET', 'org:' + code])
+    });
+    const orgData = await orgRes.json();
+    const orgInfo = orgData.result ? JSON.parse(orgData.result) : null;
+    const orgName = orgInfo ? orgInfo.name : code;
+
+    return res.status(200).json({ questions, orgName });
   } catch(err) {
     return res.status(200).json({ questions: DEFAULT_QUESTIONS });
   }
