@@ -127,10 +127,6 @@
         <input type="text" id="inp-name" placeholder="שם פרטי ושם משפחה" />
       </div>
       <div class="field-group">
-        <label for="inp-org">שם הארגון</label>
-        <input type="text" id="inp-org" placeholder="לדוגמה: חברת אלפא" />
-      </div>
-      <div class="field-group">
         <label for="inp-level">דרגה ניהולית</label>
         <select id="inp-level">
           <option value="">בחר/י דרגה...</option>
@@ -178,11 +174,14 @@ let QUESTIONS = [];
 let currentQ = 0, answers = {}, managerInfo = {};
 const orgCode = new URLSearchParams(window.location.search).get('org') || 'default';
 
+let orgName = '';
+
 async function initPage() {
   try {
     const res = await fetch('/api/questions?org=' + orgCode);
     const data = await res.json();
     QUESTIONS = data.questions || [];
+    orgName = data.orgName || orgCode;
   } catch(e) { QUESTIONS = []; }
 }
 
@@ -195,11 +194,10 @@ function showScreen(name) {
 
 async function startQuestionnaire() {
   const name  = document.getElementById('inp-name').value.trim();
-  const org   = document.getElementById('inp-org').value.trim();
   const level = document.getElementById('inp-level').value;
-  if (!name || !org || !level) { alert('נא למלא את כל הפרטים'); return; }
+  if (!name || !level) { alert('נא למלא את כל הפרטים'); return; }
   if (QUESTIONS.length === 0) { alert('שגיאה בטעינת השאלות. נסה/י לרענן את הדף.'); return; }
-  managerInfo = { name, org, level };
+  managerInfo = { name, org: orgName, level };
   currentQ = 0; answers = {};
   renderQ(); showScreen('q');
 }
