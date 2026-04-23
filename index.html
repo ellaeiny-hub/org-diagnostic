@@ -184,6 +184,7 @@ const QUESTIONS = [
 ];
 
 let currentQ = 0, answers = {}, managerInfo = {};
+const orgCode = new URLSearchParams(window.location.search).get('org') || 'default';
 
 function showScreen(name) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -224,7 +225,7 @@ async function nextQ() {
       await fetch('/api/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ manager: managerInfo, answers, timestamp: new Date().toISOString() })
+        body: JSON.stringify({ manager: managerInfo, answers, timestamp: new Date().toISOString(), orgCode })
       });
     } catch(e) { console.error(e); }
     showScreen('done');
