@@ -174,30 +174,32 @@
 </div>
 
 <script>
-const QUESTIONS = [
-  { id: 'success',       text: 'תאר/י הצלחה שחווה הצוות / העובדים שלך',                                                                                                                                   badge: 'חוזקות' },
-  { id: 'challenges',    text: 'תאר/י אתגרים ניהוליים מרכזיים שאתה/את מתמודד/ת איתם כיום',                                                                                                                badge: 'אתגרים' },
-  { id: 'culture',       text: '',                                                                                                                                                                          badge: 'תרבות ארגונית' },
-  { id: 'senior_helps',  text: 'כיצד הדרג שמעליך מסייע לך בעבודתך? תאר/י את המשאבים והצרכים שהדרג שמעליך נותן להם מענה (גם אם חלקי)',                                                                   badge: 'דרג בכיר' },
-  { id: 'senior_blocks', text: 'כיצד הדרג שמעליך מעכב אותך בעבודתך? תאר/י את המשאבים והצרכים שהדרג שמעליך לא מצליח לתת להם מענה',                                                                       badge: 'דרג בכיר' },
-  { id: 'change',        text: 'מה השינוי האחד שהיה משפר משמעותית את יעילות הניהול בארגון?',                                                                                                              badge: 'חזון' }
-];
-
+let QUESTIONS = [];
 let currentQ = 0, answers = {}, managerInfo = {};
 const orgCode = new URLSearchParams(window.location.search).get('org') || 'default';
+
+async function initPage() {
+  try {
+    const res = await fetch('/api/questions?org=' + orgCode);
+    const data = await res.json();
+    QUESTIONS = data.questions || [];
+  } catch(e) { QUESTIONS = []; }
+}
+
+window.addEventListener('DOMContentLoaded', initPage);
 
 function showScreen(name) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-' + name).classList.add('active');
 }
 
-function startQuestionnaire() {
+async function startQuestionnaire() {
   const name  = document.getElementById('inp-name').value.trim();
   const org   = document.getElementById('inp-org').value.trim();
   const level = document.getElementById('inp-level').value;
   if (!name || !org || !level) { alert('נא למלא את כל הפרטים'); return; }
+  if (QUESTIONS.length === 0) { alert('שגיאה בטעינת השאלות. נסה/י לרענן את הדף.'); return; }
   managerInfo = { name, org, level };
-  QUESTIONS[2].text = 'מה המאפיינים הבולטים ביותר של התרבות הארגונית ב' + org + '?';
   currentQ = 0; answers = {};
   renderQ(); showScreen('q');
 }
