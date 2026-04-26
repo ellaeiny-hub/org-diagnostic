@@ -145,6 +145,11 @@
         </div>
       </div>
 
+      <div id="rating-section" style="display:none;">
+        <div class="section-divider">שאלות דירוג — ממוצע לפי נושא</div>
+        <div id="rating-charts"></div>
+      </div>
+
       <div class="section-divider">השוואה בין דרגים</div>
 
       <div class="two-col">
@@ -177,6 +182,62 @@ const STOPWORDS = new Set(['את','אני','הוא','היא','הם','הן','אנ
 
 let allResponses = [], charts = {};
 
+function renderRatingCharts(all, mid, senior) {
+  const section = document.getElementById('rating-section');
+  const container = document.getElementById('rating-charts');
+  const ratingData = {};
+  all.forEach(r => {
+    Object.entries(r.answers || {}).forEach(([qId, val]) => {
+      if (val && typeof val === 'object' && !Array.isArray(val) && Object.keys(val).some(k => !isNaN(k))) {
+        if (!ratingData[qId]) ratingData[qId] = { items: {}, midItems: {}, seniorItems: {}, labels: {} };
+        Object.entries(val).forEach(([idx, score]) => {
+          const i = parseInt(idx);
+          if (!ratingData[qId].items[i]) ratingData[qId].items[i] = [];
+          ratingData[qId].items[i].push(Number(score));
+          const group = r.manager.level === 'mid' ? 'midItems' : 'seniorItems';
+          if (!ratingData[qId][group][i]) ratingData[qId][group][i] = [];
+          ratingData[qId][group][i].push(Number(score));
+          if (r.questionLabels?.[qId]?.[i]) ratingData[qId].labels[i] = r.questionLabels[qId][i];
+        });
+      }
+    });
+  });
+  const keys = Object.keys(ratingData);
+  if (!keys.length) { section.style.display = 'none'; return; }
+  section.style.display = 'block';
+  container.innerHTML = '';
+  Object.keys(charts).filter(k => k.startsWith('rating_')).forEach(k => { try { charts[k].destroy(); } catch(e){} delete charts[k]; });
+
+  keys.forEach(qId => {
+    const data = ratingData[qId];
+    const indices = Object.keys(data.items).map(Number).sort((a,b)=>a-b);
+    if (!indices.length) return;
+    const labels = indices.map(i => data.labels[i] || ('נושא ' + (i+1)));
+    const avg = arr => arr.length ? Math.round(arr.reduce((s,v)=>s+v,0)/arr.length*10)/10 : 0;
+    const avgAll = indices.map(i => avg(data.items[i]||[]));
+    const avgMid = indices.map(i => avg(data.midItems[i]||[]));
+    const avgSenior = indices.map(i => avg(data.seniorItems[i]||[]));
+    const panel = document.createElement('div');
+    panel.className = 'panel';
+    const cid = 'rating_' + qId;
+    const h = Math.max(220, indices.length * 42);
+    panel.innerHTML = '<div class="panel-title"><span class="panel-dot" style="background:#4A4A8C"></span>ממוצע דירוג לפי נושא (סולם 1-5)</div><div style="position:relative;height:' + h + 'px;"><canvas id="' + cid + '"></canvas></div>';
+    container.appendChild(panel);
+    const datasets = [{ label: 'כלל המשיבים', data: avgAll, backgroundColor: '#4A4A8C33', borderColor: '#4A4A8C', borderWidth: 2 }];
+    if (mid.length) datasets.push({ label: 'דרג מנהלים', data: avgMid, backgroundColor: '#1A4A6B33', borderColor: '#1A4A6B', borderWidth: 2 });
+    if (senior.length) datasets.push({ label: 'דרג בכיר', data: avgSenior, backgroundColor: '#2D5A3D33', borderColor: '#2D5A3D', borderWidth: 2 });
+    charts[cid] = new Chart(document.getElementById(cid).getContext('2d'), {
+      type: 'bar',
+      data: { labels, datasets },
+      options: {
+        indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+        scales: { x: { min:0, max:5, ticks:{stepSize:1,font:{size:11}}, grid:{color:'#E2DDD8'} }, y: { ticks:{font:{size:11,family:'Heebo'},color:'#6B6B65'} } },
+        plugins: { legend: { position:'bottom', labels:{font:{size:11,family:'Heebo'},boxWidth:12} } }
+      }
+    });
+  });
+}
+
 async function loadData() {
   document.getElementById('loading-state').style.display = 'block';
   document.getElementById('empty-state').style.display = 'none';
@@ -197,6 +258,7 @@ async function loadData() {
     document.getElementById('stat-mid').textContent = mid.length;
     document.getElementById('stat-senior').textContent = senior.length;
     renderVisuals(allResponses, mid, senior);
+    renderRatingCharts(allResponses, mid, senior);
     renderResponses(allResponses);
   } catch(e) {
     document.getElementById('loading-state').innerHTML = '<p style="color:#8C3A2A">שגיאה בטעינת הנתונים. נסי לרענן.</p>';
