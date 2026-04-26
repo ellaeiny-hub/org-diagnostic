@@ -170,7 +170,7 @@
 </div>
 
 <script>
-let QUESTIONS = [];
+let QUESTIONS = [], ACTIVE_QUESTIONS = [];
 let currentQ = 0, answers = {}, managerInfo = {};
 const orgCode = new URLSearchParams(window.location.search).get('org') || 'default';
 
@@ -198,27 +198,29 @@ async function startQuestionnaire() {
   if (!name || !level) { alert('נא למלא את כל הפרטים'); return; }
   if (QUESTIONS.length === 0) { alert('שגיאה בטעינת השאלות. נסה/י לרענן את הדף.'); return; }
   managerInfo = { name, org: orgName, level };
+  // Filter questions by audience
+  ACTIVE_QUESTIONS = QUESTIONS.filter(q => !q.audience || q.audience === 'both' || q.audience === level);
   currentQ = 0; answers = {};
   renderQ(); showScreen('q');
 }
 
 function renderQ() {
-  const q = QUESTIONS[currentQ], total = QUESTIONS.length;
+  const q = ACTIVE_QUESTIONS[currentQ], total = ACTIVE_QUESTIONS.length;
   document.getElementById('q-text').textContent    = q.text;
   document.getElementById('q-badge').textContent   = q.badge;
   document.getElementById('q-counter').textContent = (currentQ + 1) + ' / ' + total;
   document.getElementById('progress-fill').style.width = ((currentQ + 1) / total * 100) + '%';
   document.getElementById('q-answer').value        = answers[q.id] || '';
   document.getElementById('btn-prev').style.visibility = currentQ === 0 ? 'hidden' : 'visible';
-  document.getElementById('btn-next').textContent  = currentQ === total - 1 ? 'שמור וסיים ✓' : 'הבאה ←';
+  document.getElementById('btn-next').textContent = currentQ === total - 1 ? 'שמור וסיים ✓' : 'הבאה ←';
   document.getElementById('q-answer').focus();
 }
 
 async function nextQ() {
   const val = document.getElementById('q-answer').value.trim();
   if (!val) { alert('נא לענות על השאלה לפני המעבר'); return; }
-  answers[QUESTIONS[currentQ].id] = val;
-  if (currentQ === QUESTIONS.length - 1) {
+  answers[ACTIVE_QUESTIONS[currentQ].id] = val;
+  if (currentQ === ACTIVE_QUESTIONS.length - 1) {
     document.getElementById('btn-next').disabled = true;
     document.getElementById('btn-next').textContent = 'שומר...';
     try {
@@ -235,7 +237,7 @@ async function nextQ() {
 }
 
 function prevQ() {
-  answers[QUESTIONS[currentQ].id] = document.getElementById('q-answer').value.trim();
+  answers[ACTIVE_QUESTIONS[currentQ].id] = document.getElementById('q-answer').value.trim();
   currentQ--; renderQ();
 }
 </script>
