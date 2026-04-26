@@ -111,6 +111,14 @@
   .done-title { font-size: 22px; font-weight: 300; text-align: center; margin-bottom: 0.5rem; }
   .done-sub { font-size: 14px; color: var(--text-muted); text-align: center; line-height: 1.6; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .rating-grid { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+  .rating-row { display: flex; align-items: center; gap: 10px; }
+  .rating-label { font-size: 14px; color: var(--text); flex: 1; line-height: 1.4; }
+  .rating-stars { display: flex; gap: 6px; flex-shrink: 0; }
+  .rating-btn { width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid var(--border-strong); background: var(--bg); font-size: 14px; font-weight: 500; font-family: 'Heebo', sans-serif; cursor: pointer; color: var(--text-muted); transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
+  .rating-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+  .rating-btn.selected { background: var(--accent); color: white; border-color: var(--accent); }
+  .rating-hint { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-light); margin-top: 4px; margin-bottom: 8px; padding: 0 2px; }
 </style>
 </head>
 <body>
@@ -147,7 +155,7 @@
         <span class="q-counter" id="q-counter">1 / 6</span>
       </div>
       <div class="q-text" id="q-text"></div>
-      <textarea id="q-answer" placeholder="כתוב/י את תשובתך כאן..."></textarea>
+      <div id="q-input-area"></div>
       <div class="nav-row">
         <button class="btn-secondary" id="btn-prev" onclick="prevQ()">→ הקודמת</button>
         <button class="btn-primary" id="btn-next" style="width:auto;margin-top:0;padding:10px 28px;" onclick="nextQ()">הבאה ←</button>
@@ -206,20 +214,66 @@ async function startQuestionnaire() {
 
 function renderQ() {
   const q = ACTIVE_QUESTIONS[currentQ], total = ACTIVE_QUESTIONS.length;
-  document.getElementById('q-text').textContent    = q.text;
-  document.getElementById('q-badge').textContent   = q.badge;
+  document.getElementById('q-text').textContent  = q.text;
+  document.getElementById('q-badge').textContent = q.badge || (q.type === 'rating' ? 'דירוג' : 'שאלה');
   document.getElementById('q-counter').textContent = (currentQ + 1) + ' / ' + total;
   document.getElementById('progress-fill').style.width = ((currentQ + 1) / total * 100) + '%';
-  document.getElementById('q-answer').value        = answers[q.id] || '';
   document.getElementById('btn-prev').style.visibility = currentQ === 0 ? 'hidden' : 'visible';
   document.getElementById('btn-next').textContent = currentQ === total - 1 ? 'שמור וסיים ✓' : 'הבאה ←';
-  document.getElementById('q-answer').focus();
+
+  const area = document.getElementById('q-input-area');
+  if (q.type === 'rating' && q.ratingItems && q.ratingItems.length > 0) {
+    const saved = answers[q.id] || {};
+    let html = '<div class="rating-hint"><span>נמוך</span><span>גבוה</span></div><div class="rating-grid">';
+    q.ratingItems.forEach((item, i) => {
+      const val = saved[i] || 0;
+      let btns = '';
+      for (let n = 1; n <= 5; n++) {
+        btns += `<button class="rating-btn ${val===n?'selected':''}" onclick="setRating(${currentQ},${i},${n},this)">${n}</button>`;
+      }
+      html += `<div class="rating-row"><span class="rating-label">${item}</span><div class="rating-stars">${btns}</div></div>`;
+    });
+    html += '</div>';
+    area.innerHTML = html;
+  } else {
+    const saved = answers[q.id] || '';
+    area.innerHTML = `<textarea id="q-answer" placeholder="כתוב/י את תשובתך כאן..." style="width:100%;min-height:110px;padding:12px 14px;font-size:14px;font-family:'Heebo',sans-serif;line-height:1.6;border:1px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);resize:vertical;">${saved}</textarea>`;
+    document.getElementById('q-answer').focus();
+  }
+}
+
+function setRating(qIdx, itemIdx, val, btn) {
+  const q = ACTIVE_QUESTIONS[qIdx];
+  if (!answers[q.id]) answers[q.id] = {};
+  answers[q.id][itemIdx] = val;
+  const row = btn.closest('.rating-row');
+  row.querySelectorAll('.rating-btn').forEach((b, i) => b.classList.toggle('selected', i + 1 === val));
+}
+
+function buildQuestionLabels() {
+  const labels = {};
+  ACTIVE_QUESTIONS.forEach(q => {
+    if (q.type === 'rating' && q.ratingItems) {
+      labels[q.id] = {};
+      q.ratingItems.forEach((item, i) => { labels[q.id][i] = item; });
+    }
+  });
+  return labels;
 }
 
 async function nextQ() {
-  const val = document.getElementById('q-answer').value.trim();
-  if (!val) { alert('נא לענות על השאלה לפני המעבר'); return; }
-  answers[ACTIVE_QUESTIONS[currentQ].id] = val;
+  const q = ACTIVE_QUESTIONS[currentQ];
+  let val;
+  if (q.type === 'rating') {
+    val = answers[q.id] || {};
+    const answered = Object.keys(val).length;
+    if (answered === 0) { alert('נא לדרג לפחות נושא אחד לפני המעבר'); return; }
+  } else {
+    const ta = document.getElementById('q-answer');
+    val = ta ? ta.value.trim() : '';
+    if (!val) { alert('נא לענות על השאלה לפני המעבר'); return; }
+  }
+  answers[q.id] = val;
   if (currentQ === ACTIVE_QUESTIONS.length - 1) {
     document.getElementById('btn-next').disabled = true;
     document.getElementById('btn-next').textContent = 'שומר...';
@@ -227,7 +281,13 @@ async function nextQ() {
       await fetch('/api/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ manager: managerInfo, answers, timestamp: new Date().toISOString(), orgCode })
+        body: JSON.stringify({
+          manager: managerInfo,
+          answers,
+          timestamp: new Date().toISOString(),
+          orgCode,
+          questionLabels: buildQuestionLabels()
+        })
       });
     } catch(e) { console.error(e); }
     showScreen('done');
@@ -237,7 +297,11 @@ async function nextQ() {
 }
 
 function prevQ() {
-  answers[ACTIVE_QUESTIONS[currentQ].id] = document.getElementById('q-answer').value.trim();
+  const q = ACTIVE_QUESTIONS[currentQ];
+  if (q.type !== 'rating') {
+    const ta = document.getElementById('q-answer');
+    if (ta) answers[q.id] = ta.value.trim();
+  }
   currentQ--; renderQ();
 }
 </script>
