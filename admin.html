@@ -72,6 +72,19 @@
   .q-save-btn { display: block; width: 100%; padding: 9px; font-size: 13px; font-weight: 500; font-family: 'Heebo', sans-serif; background: var(--accent); color: white; border: none; border-radius: var(--radius-sm); cursor: pointer; }
   .q-save-btn:hover { background: #234a32; }
   .save-msg { font-size: 12px; color: var(--accent); text-align: center; margin-top: 6px; display: none; }
+  .q-type { font-size: 11px; font-family: 'Heebo', sans-serif; border: 1px solid var(--border-strong); border-radius: 4px; padding: 3px 6px; background: var(--bg); color: var(--text-muted); cursor: pointer; flex-shrink: 0; margin-top: 2px; }
+  .q-type:focus { outline: none; border-color: var(--accent); }
+  .q-type.type-rating { background: #EEF0FB; color: #2D3A8C; border-color: #C5CBF0; }
+  .q-rating-items { margin-top: 6px; padding: 8px; background: #F0F2FC; border-radius: 6px; display: none; }
+  .q-rating-items.visible { display: block; }
+  .rating-item { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+  .rating-item:last-child { margin-bottom: 0; }
+  .rating-item-num { font-size: 11px; font-weight: 600; color: #2D3A8C; width: 16px; flex-shrink: 0; }
+  .rating-item-input { flex: 1; padding: 4px 8px; font-size: 12px; font-family: 'Heebo', sans-serif; border: 1px solid var(--border-strong); border-radius: 4px; background: white; color: var(--text); }
+  .rating-item-input:focus { outline: none; border-color: var(--accent); }
+  .add-rating-item { font-size: 11px; color: #2D3A8C; background: none; border: 1px dashed #C5CBF0; border-radius: 4px; padding: 3px 8px; cursor: pointer; margin-top: 4px; font-family: 'Heebo', sans-serif; }
+  .remove-rating-item { background: none; border: none; cursor: pointer; color: var(--text-light); font-size: 14px; padding: 0; line-height: 1; }
+  .remove-rating-item:hover { color: var(--coral); }
   .q-audience { font-size: 11px; font-family: 'Heebo', sans-serif; border: 1px solid var(--border-strong); border-radius: 4px; padding: 3px 6px; background: var(--bg); color: var(--text-muted); cursor: pointer; flex-shrink: 0; margin-top: 2px; }
   .q-audience:focus { outline: none; border-color: var(--accent); }
   .aud-both { background: var(--bg); }
@@ -111,12 +124,14 @@
 const BASE = window.location.origin;
 
 const DEFAULT_QUESTIONS = [
-  { id: 'success', text: 'תאר/י הצלחה שחווה הצוות / העובדים שלך', badge: 'חוזקות' },
-  { id: 'challenges', text: 'תאר/י אתגרים ניהוליים מרכזיים שאתה/את מתמודד/ת איתם כיום', badge: 'אתגרים' },
-  { id: 'culture', text: 'מה המאפיינים הבולטים ביותר של התרבות הארגונית?', badge: 'תרבות ארגונית' },
-  { id: 'senior_helps', text: 'כיצד הדרג שמעליך מסייע לך בעבודתך? תאר/י את המשאבים והצרכים שהדרג שמעליך נותן להם מענה', badge: 'דרג בכיר' },
-  { id: 'senior_blocks', text: 'כיצד הדרג שמעליך מעכב אותך בעבודתך? תאר/י את המשאבים והצרכים שהדרג שמעליך לא מצליח לתת להם מענה', badge: 'דרג בכיר' },
-  { id: 'change', text: 'מה השינוי האחד שהיה משפר משמעותית את יעילות הניהול בארגון?', badge: 'חזון' }
+  { id: 'success', text: 'תאר/י הצלחה שחווה הצוות / העובדים שלך', badge: 'חוזקות', type: 'open', audience: 'both' },
+  { id: 'challenges', text: 'תאר/י אתגרים ניהוליים מרכזיים שאתה/את מתמודד/ת איתם כיום', badge: 'אתגרים', type: 'open', audience: 'both' },
+  { id: 'culture', text: 'מה המאפיינים הבולטים ביותר של התרבות הארגונית?', badge: 'תרבות ארגונית', type: 'open', audience: 'both' },
+  { id: 'rating1', text: 'עד כמה את/ה מרגיש/ה בטוח/ה ביכולת שלך בתחומים הבאים?', badge: 'דירוג', type: 'rating', audience: 'both',
+    ratingItems: ['ניהול שיחות קשות','מתן משוב','ניהול עובדים שאינם עומדים בציפיות המקצועיות','ניהול עובדים חזקים ממך מקצועית','ניהול ממשקים בארגון','השפעה על המנהל הישיר בקבלת החלטות','העברת מסרים ארגוניים לאנשיי','רתימת אנשיי לשינויים','ניהול קונפליקטים בתוך הצוות הישיר','האצלת סמכויות ושחרור שליטה'] },
+  { id: 'senior_helps', text: 'כיצד הדרג שמעליך מסייע לך בעבודתך? תאר/י את המשאבים והצרכים שהדרג שמעליך נותן להם מענה', badge: 'דרג בכיר', type: 'open', audience: 'mid' },
+  { id: 'senior_blocks', text: 'כיצד הדרג שמעליך מעכב אותך בעבודתך? תאר/י את המשאבים והצרכים שהדרג שמעליך לא מצליח לתת להם מענה', badge: 'דרג בכיר', type: 'open', audience: 'mid' },
+  { id: 'change', text: 'מה השינוי האחד שהיה משפר משמעותית את יעילות הניהול בארגון?', badge: 'חזון', type: 'open', audience: 'both' }
 ];
 
 async function redisCmd(command) {
@@ -226,9 +241,27 @@ function renderQList(code, questions) {
     div.className = 'q-item';
     div.dataset.id = q.id;
     const aud = q.audience || 'both';
+    const type = q.type || 'open';
+    const items = q.ratingItems || [];
+    const itemsHtml = items.map((item, j) => `
+      <div class="rating-item">
+        <span class="rating-item-num">${j+1}.</span>
+        <input class="rating-item-input" type="text" value="${item}" placeholder="נושא לדירוג..." />
+        <button class="remove-rating-item" onclick="removeRatingItem(this)">×</button>
+      </div>`).join('');
     div.innerHTML = `
       <span class="q-num">${i + 1}</span>
-      <textarea class="q-textarea" rows="2" oninput="autoResize(this)">${q.text}</textarea>
+      <div style="flex:1;">
+        <textarea class="q-textarea" rows="2" oninput="autoResize(this)">${q.text}</textarea>
+        <div class="q-rating-items ${type==='rating'?'visible':''}">
+          <div class="rating-items-list">${itemsHtml}</div>
+          <button class="add-rating-item" onclick="addRatingItem(this)">+ הוסיפי נושא</button>
+        </div>
+      </div>
+      <select class="q-type ${type==='rating'?'type-rating':''}" onchange="updateTypeClass(this)" title="סוג השאלה">
+        <option value="open" ${type==='open'?'selected':''}>טקסט</option>
+        <option value="rating" ${type==='rating'?'selected':''}>דירוג 1-5</option>
+      </select>
       <select class="q-audience aud-${aud}" onchange="updateAudClass(this)" title="למי מיועדת השאלה?">
         <option value="both" ${aud==='both'?'selected':''}>כולם</option>
         <option value="mid" ${aud==='mid'?'selected':''}>דרג מנהלים</option>
@@ -238,6 +271,34 @@ function renderQList(code, questions) {
     el.appendChild(div);
     autoResize(div.querySelector('textarea'));
   });
+}
+
+function updateTypeClass(sel) {
+  sel.className = 'q-type' + (sel.value === 'rating' ? ' type-rating' : '');
+  const ratingDiv = sel.closest('.q-item').querySelector('.q-rating-items');
+  if (sel.value === 'rating') {
+    ratingDiv.classList.add('visible');
+    if (!ratingDiv.querySelector('.rating-item')) addRatingItem(ratingDiv.querySelector('.add-rating-item'));
+  } else {
+    ratingDiv.classList.remove('visible');
+  }
+}
+
+function addRatingItem(btn) {
+  const list = btn.closest('.q-rating-items').querySelector('.rating-items-list');
+  const num = list.children.length + 1;
+  const div = document.createElement('div');
+  div.className = 'rating-item';
+  div.innerHTML = `<span class="rating-item-num">${num}.</span><input class="rating-item-input" type="text" placeholder="נושא לדירוג..." /><button class="remove-rating-item" onclick="removeRatingItem(this)">×</button>`;
+  list.appendChild(div);
+  div.querySelector('input').focus();
+}
+
+function removeRatingItem(btn) {
+  const item = btn.closest('.rating-item');
+  const list = item.parentElement;
+  item.remove();
+  Array.from(list.children).forEach((el, i) => el.querySelector('.rating-item-num').textContent = (i+1) + '.');
 }
 
 function updateAudClass(sel) {
@@ -257,7 +318,14 @@ function addQuestion(code) {
   div.dataset.id = 'q_' + Date.now();
   div.innerHTML = `
     <span class="q-num">${count}</span>
-    <textarea class="q-textarea" rows="2" placeholder="כתבי כאן את השאלה..." oninput="autoResize(this)"></textarea>
+    <div style="flex:1;">
+      <textarea class="q-textarea" rows="2" placeholder="כתבי כאן את השאלה..." oninput="autoResize(this)"></textarea>
+      <div class="q-rating-items"><div class="rating-items-list"></div><button class="add-rating-item" onclick="addRatingItem(this)">+ הוסיפי נושא</button></div>
+    </div>
+    <select class="q-type" onchange="updateTypeClass(this)" title="סוג השאלה">
+      <option value="open">טקסט</option>
+      <option value="rating">דירוג 1-5</option>
+    </select>
     <select class="q-audience aud-both" onchange="updateAudClass(this)" title="למי מיועדת השאלה?">
       <option value="both">כולם</option>
       <option value="mid">דרג מנהלים</option>
@@ -280,12 +348,19 @@ function removeQuestion(btn) {
 
 async function saveQuestions(code) {
   const items = document.querySelectorAll('#qlist-' + code + ' .q-item');
-  const questions = Array.from(items).map((item, i) => ({
-    id: item.dataset.id || 'q_' + i,
-    text: item.querySelector('textarea').value.trim(),
-    audience: item.querySelector('select.q-audience')?.value || 'both',
-    badge: 'שאלה ' + (i + 1)
-  })).filter(q => q.text);
+  const questions = Array.from(items).map((item, i) => {
+    const type = item.querySelector('select.q-type')?.value || 'open';
+    const ratingInputs = item.querySelectorAll('.rating-item-input');
+    const ratingItems = Array.from(ratingInputs).map(inp => inp.value.trim()).filter(Boolean);
+    return {
+      id: item.dataset.id || 'q_' + i,
+      text: item.querySelector('textarea').value.trim(),
+      type,
+      ratingItems: type === 'rating' ? ratingItems : [],
+      audience: item.querySelector('select.q-audience')?.value || 'both',
+      badge: type === 'rating' ? 'דירוג' : 'שאלה ' + (i + 1)
+    };
+  }).filter(q => q.text);
 
   if (questions.length === 0) { alert('נא להוסיף לפחות שאלה אחת'); return; }
 
