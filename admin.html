@@ -72,6 +72,11 @@
   .q-save-btn { display: block; width: 100%; padding: 9px; font-size: 13px; font-weight: 500; font-family: 'Heebo', sans-serif; background: var(--accent); color: white; border: none; border-radius: var(--radius-sm); cursor: pointer; }
   .q-save-btn:hover { background: #234a32; }
   .save-msg { font-size: 12px; color: var(--accent); text-align: center; margin-top: 6px; display: none; }
+  .q-audience { font-size: 11px; font-family: 'Heebo', sans-serif; border: 1px solid var(--border-strong); border-radius: 4px; padding: 3px 6px; background: var(--bg); color: var(--text-muted); cursor: pointer; flex-shrink: 0; margin-top: 2px; }
+  .q-audience:focus { outline: none; border-color: var(--accent); }
+  .aud-both { background: var(--bg); }
+  .aud-mid { background: var(--blue-light); color: var(--blue); border-color: var(--blue-light); }
+  .aud-senior { background: var(--accent-light); color: var(--accent); border-color: var(--accent-light); }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
   .org-row { animation: fadeIn 0.2s ease; }
 </style>
@@ -220,13 +225,23 @@ function renderQList(code, questions) {
     const div = document.createElement('div');
     div.className = 'q-item';
     div.dataset.id = q.id;
+    const aud = q.audience || 'both';
     div.innerHTML = `
       <span class="q-num">${i + 1}</span>
       <textarea class="q-textarea" rows="2" oninput="autoResize(this)">${q.text}</textarea>
+      <select class="q-audience aud-${aud}" onchange="updateAudClass(this)" title="למי מיועדת השאלה?">
+        <option value="both" ${aud==='both'?'selected':''}>כולם</option>
+        <option value="mid" ${aud==='mid'?'selected':''}>דרג מנהלים</option>
+        <option value="senior" ${aud==='senior'?'selected':''}>דרג בכיר</option>
+      </select>
       <button class="q-delete" onclick="removeQuestion(this)" title="מחק שאלה">×</button>`;
     el.appendChild(div);
     autoResize(div.querySelector('textarea'));
   });
+}
+
+function updateAudClass(sel) {
+  sel.className = 'q-audience aud-' + sel.value;
 }
 
 function autoResize(ta) {
@@ -243,6 +258,11 @@ function addQuestion(code) {
   div.innerHTML = `
     <span class="q-num">${count}</span>
     <textarea class="q-textarea" rows="2" placeholder="כתבי כאן את השאלה..." oninput="autoResize(this)"></textarea>
+    <select class="q-audience aud-both" onchange="updateAudClass(this)" title="למי מיועדת השאלה?">
+      <option value="both">כולם</option>
+      <option value="mid">דרג מנהלים</option>
+      <option value="senior">דרג בכיר</option>
+    </select>
     <button class="q-delete" onclick="removeQuestion(this)" title="מחק שאלה">×</button>`;
   el.appendChild(div);
   div.querySelector('textarea').focus();
@@ -263,6 +283,7 @@ async function saveQuestions(code) {
   const questions = Array.from(items).map((item, i) => ({
     id: item.dataset.id || 'q_' + i,
     text: item.querySelector('textarea').value.trim(),
+    audience: item.querySelector('select.q-audience')?.value || 'both',
     badge: 'שאלה ' + (i + 1)
   })).filter(q => q.text);
 
