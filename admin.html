@@ -124,14 +124,12 @@
 const BASE = window.location.origin;
 
 const DEFAULT_QUESTIONS = [
-  { id: 'success', text: 'תאר/י הצלחה שחווה הצוות / העובדים שלך', badge: 'חוזקות', type: 'open', audience: 'both' },
-  { id: 'challenges', text: 'תאר/י אתגרים ניהוליים מרכזיים שאתה/את מתמודד/ת איתם כיום', badge: 'אתגרים', type: 'open', audience: 'both' },
-  { id: 'culture', text: 'מה המאפיינים הבולטים ביותר של התרבות הארגונית?', badge: 'תרבות ארגונית', type: 'open', audience: 'both' },
-  { id: 'rating1', text: 'עד כמה את/ה מרגיש/ה בטוח/ה ביכולת שלך בתחומים הבאים?', badge: 'דירוג', type: 'rating', audience: 'both',
-    ratingItems: ['ניהול שיחות קשות','מתן משוב','ניהול עובדים שאינם עומדים בציפיות המקצועיות','ניהול עובדים חזקים ממך מקצועית','ניהול ממשקים בארגון','השפעה על המנהל הישיר בקבלת החלטות','העברת מסרים ארגוניים לאנשיי','רתימת אנשיי לשינויים','ניהול קונפליקטים בתוך הצוות הישיר','האצלת סמכויות ושחרור שליטה'] },
-  { id: 'senior_helps', text: 'כיצד הדרג שמעליך מסייע לך בעבודתך? תאר/י את המשאבים והצרכים שהדרג שמעליך נותן להם מענה', badge: 'דרג בכיר', type: 'open', audience: 'mid' },
-  { id: 'senior_blocks', text: 'כיצד הדרג שמעליך מעכב אותך בעבודתך? תאר/י את המשאבים והצרכים שהדרג שמעליך לא מצליח לתת להם מענה', badge: 'דרג בכיר', type: 'open', audience: 'mid' },
-  { id: 'change', text: 'מה השינוי האחד שהיה משפר משמעותית את יעילות הניהול בארגון?', badge: 'חזון', type: 'open', audience: 'both' }
+  { id: 'open_1', text: '', badge: 'שאלה', type: 'open', audience: 'both' },
+  { id: 'open_2', text: '', badge: 'שאלה', type: 'open', audience: 'both' },
+  { id: 'open_3', text: '', badge: 'שאלה', type: 'open', audience: 'both' },
+  { id: 'open_4', text: '', badge: 'שאלה', type: 'open', audience: 'both' },
+  { id: 'rating_1', text: '', badge: 'דירוג', type: 'rating', audience: 'both',
+    ratingItems: ['', '', '', '', ''] }
 ];
 
 async function redisCmd(command) {
