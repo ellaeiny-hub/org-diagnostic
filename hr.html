@@ -7,71 +7,86 @@
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --bg: #F7F5F2; --surface: #FFFFFF; --text: #1A1A18;
-    --text-muted: #6B6B65; --text-light: #9E9E96;
-    --accent: #2D5A3D; --accent-light: #E8F0EB;
-    --amber: #8C6A1A; --amber-light: #F5EDD8;
-    --blue: #1A4A6B; --blue-light: #E5EEF5;
-    --coral: #8C3A2A; --coral-light: #F5E8E5;
-    --border: #E2DDD8; --border-strong: #C8C2BB;
-    --radius: 12px; --radius-sm: 8px;
-  }
-  body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-  .header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
-  .header-title { font-size: 15px; font-weight: 600; }
-  .header-sub { font-size: 12px; color: var(--text-light); margin-top: 1px; }
-  .logo-mark { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-light); }
-  .main { max-width: 1000px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
-  .spinner { width: 32px; height: 32px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; margin: 0 auto 1rem; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  #loading-state { text-align: center; padding: 5rem 2rem; }
-  #loading-state p { font-size: 14px; color: var(--text-muted); }
-  #empty-state { display: none; text-align: center; padding: 5rem 2rem; }
-  #empty-state h2 { font-size: 20px; font-weight: 400; margin-bottom: 0.5rem; }
-  #empty-state p { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
-  #dashboard { display: none; }
-  .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
-  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; }
-  .stat-label { font-size: 12px; color: var(--text-light); margin-bottom: 4px; }
-  .stat-value { font-size: 28px; font-weight: 300; }
-  .stat-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
-  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.5rem; }
-  .panel-title { font-size: 14px; font-weight: 600; margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
-  .panel-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
-  .tab-bar { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; }
-  .tab-btn { padding: 10px 20px; font-size: 13px; font-family: 'Heebo', sans-serif; background: none; border: none; border-bottom: 2px solid transparent; color: var(--text-muted); cursor: pointer; margin-bottom: -1px; }
-  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 500; }
-  .tab-pane { display: none; }
-  .tab-pane.active { display: block; }
-  .response-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
-  .response-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); }
-  .response-name { font-size: 14px; font-weight: 600; }
-  .level-badge { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 99px; }
-  .badge-mid { background: var(--blue-light); color: var(--blue); }
-  .badge-senior { background: var(--accent-light); color: var(--accent); }
-  .response-qa { margin-bottom: 0.75rem; }
-  .response-q { font-size: 11px; font-weight: 600; color: var(--text-light); letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 3px; }
-  .response-a { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
-  .btn-refresh { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; font-size: 12px; font-family: 'Heebo', sans-serif; background: transparent; color: var(--text-muted); border: 1px solid var(--border-strong); border-radius: var(--radius-sm); cursor: pointer; }
-  .btn-refresh:hover { background: var(--bg); }
-  .chart-wrap { position: relative; height: 220px; }
-  .keywords-cloud { display: flex; flex-wrap: wrap; gap: 6px; }
-  .kw-tag { font-size: 12px; padding: 4px 10px; border-radius: 99px; font-weight: 500; }
-  .kw-green { background: var(--accent-light); color: var(--accent); }
-  .kw-amber { background: var(--amber-light); color: var(--amber); }
-  .kw-blue { background: var(--blue-light); color: var(--blue); }
-  .kw-coral { background: var(--coral-light); color: var(--coral); }
-  .section-divider { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-light); margin: 1.5rem 0 0.75rem; }
-  .insight-row { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
-  .insight-row:last-child { border: none; }
-  .insight-dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
-  .insight-text { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
-  @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } .stats-row { grid-template-columns: 1fr 1fr; } }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-  .panel, .response-card, .stat-card { animation: fadeIn 0.3s ease; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #F7F5F2; --surface: #FFFFFF; --text: #1A1A18;
+  --muted: #6B6B65; --light: #9E9E96;
+  --accent: #2D5A3D; --accent-light: #E8F0EB;
+  --amber: #8C6A1A; --amber-light: #F5EDD8;
+  --blue: #1A4A6B; --blue-light: #E5EEF5;
+  --coral: #8C3A2A; --coral-light: #F5E8E5;
+  --border: #E2DDD8; --border-strong: #C8C2BB;
+  --radius: 12px; --radius-sm: 8px;
+}
+body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+.header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
+.header-title { font-size: 15px; font-weight: 600; }
+.header-sub { font-size: 12px; color: var(--light); margin-top: 1px; }
+.logo { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--light); }
+.main { max-width: 1000px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+.spinner { width: 32px; height: 32px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; margin: 0 auto 1rem; }
+@keyframes spin { to { transform: rotate(360deg); } }
+#state-loading { text-align: center; padding: 5rem 2rem; }
+#state-loading p { font-size: 14px; color: var(--muted); }
+#state-empty { display: none; text-align: center; padding: 5rem 2rem; }
+#state-empty h2 { font-size: 20px; font-weight: 400; margin-bottom: 0.5rem; }
+#state-empty p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+#dashboard { display: none; }
+.stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+.stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; }
+.stat-label { font-size: 12px; color: var(--light); margin-bottom: 4px; }
+.stat-value { font-size: 28px; font-weight: 300; }
+.stat-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.5rem; }
+.panel-title { font-size: 14px; font-weight: 600; margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+.pdot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+.tab-bar { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; }
+.tab-btn { padding: 10px 20px; font-size: 13px; font-family: 'Heebo', sans-serif; background: none; border: none; border-bottom: 2px solid transparent; color: var(--muted); cursor: pointer; margin-bottom: -1px; }
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 500; }
+.tab-pane { display: none; }
+.tab-pane.active { display: block; }
+.rc { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
+.rc-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); }
+.rc-name { font-size: 14px; font-weight: 600; }
+.bdg { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 99px; }
+.bdg-mid { background: var(--blue-light); color: var(--blue); }
+.bdg-senior { background: var(--accent-light); color: var(--accent); }
+.rqa { margin-bottom: 0.75rem; }
+.rq { font-size: 11px; font-weight: 600; color: var(--light); letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 3px; }
+.ra { font-size: 13px; color: var(--muted); line-height: 1.6; }
+.btn-refresh { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; font-size: 12px; font-family: 'Heebo', sans-serif; background: transparent; color: var(--muted); border: 1px solid var(--border-strong); border-radius: var(--radius-sm); cursor: pointer; }
+.btn-refresh:hover { background: var(--bg); }
+.cwrap { position: relative; height: 220px; }
+.kc { display: flex; flex-wrap: wrap; gap: 6px; }
+.kt { font-size: 12px; padding: 4px 10px; border-radius: 99px; font-weight: 500; }
+.kg { background: var(--accent-light); color: var(--accent); }
+.ka { background: var(--amber-light); color: var(--amber); }
+.kb { background: var(--blue-light); color: var(--blue); }
+.kr { background: var(--coral-light); color: var(--coral); }
+.dlabel { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--light); margin: 1.5rem 0 0.75rem; }
+.irow { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+.irow:last-child { border: none; }
+.idot { width: 6px; height: 6px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+.itext { font-size: 13px; color: var(--muted); line-height: 1.6; }
+.ibox { background: #FFFDF5; border: 1.5px solid #D4A84B; border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.5rem; }
+.ibox-title { font-size: 14px; font-weight: 600; color: var(--amber); margin-bottom: 0.4rem; }
+.ibox-sub { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 1rem; }
+.pchips { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 0.75rem; }
+.pchip { display: flex; flex-direction: column; align-items: center; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 20px; }
+.pchip-label { font-size: 11px; color: var(--light); margin-bottom: 4px; }
+.pchip-num { font-size: 22px; font-weight: 300; }
+.pchip-num.ok { color: var(--accent); }
+.pchip-num.low { color: var(--amber); }
+.pchip-note { font-size: 11px; margin-top: 2px; }
+.btn-gen { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; font-size: 14px; font-weight: 500; font-family: 'Heebo', sans-serif; background: var(--amber); color: white; border: none; border-radius: var(--radius-sm); cursor: pointer; margin-left: 8px; margin-bottom: 8px; }
+.btn-gen:hover { background: #7a5a14; }
+.pbox { background: var(--bg); border: 1px solid var(--border-strong); border-radius: var(--radius-sm); padding: 1rem; margin-top: 1rem; font-size: 12px; color: var(--muted); line-height: 1.7; white-space: pre-wrap; max-height: 240px; overflow-y: auto; display: none; }
+.btn-cp { display: none; align-items: center; gap: 6px; margin-top: 0.75rem; padding: 8px 16px; font-size: 13px; font-family: 'Heebo', sans-serif; background: transparent; color: var(--muted); border: 1px solid var(--border-strong); border-radius: var(--radius-sm); cursor: pointer; }
+.btn-cp:hover { background: var(--surface); }
+@media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } .stats-row { grid-template-columns: 1fr 1fr; } }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+.panel, .rc, .stat-card { animation: fadeIn 0.3s ease; }
 </style>
 </head>
 <body>
@@ -82,16 +97,13 @@
   </div>
   <div style="display:flex;align-items:center;gap:12px;">
     <button class="btn-refresh" onclick="loadData()">↻ רענן</button>
-    <span class="logo-mark">אבחון ארגוני</span>
+    <span class="logo">אבחון ארגוני</span>
   </div>
 </div>
 
 <div class="main">
-  <div id="loading-state"><div class="spinner"></div><p>טוען תשובות...</p></div>
-  <div id="empty-state">
-    <h2>טרם נאספו תשובות</h2>
-    <p>שלחי את קישור השאלון למנהלים.<br>הנתונים יופיעו כאן ברגע שהם ימלאו.</p>
-  </div>
+  <div id="state-loading"><div class="spinner"></div><p>טוען תשובות...</p></div>
+  <div id="state-empty"><h2>טרם נאספו תשובות</h2><p>שלחי את קישור השאלון למנהלים.<br>הנתונים יופיעו כאן ברגע שהם ימלאו.</p></div>
 
   <div id="dashboard">
     <div class="stats-row">
@@ -100,265 +112,293 @@
       <div class="stat-card"><div class="stat-label">דרג בכיר</div><div class="stat-value" id="stat-senior">0</div><div class="stat-sub">מנהלי המשתתפים</div></div>
     </div>
 
+    <div class="ibox">
+      <div class="ibox-title">✦ תובנות AI לתוכנית ולדרגים</div>
+      <div class="ibox-sub">לאחר איסוף מינימום של 8 מנהלים משתתפים ו-4 מנהלים בכירים, יוצרו שני סוגי ניתוח: המלצות לתוכנית הפיתוח, ותובנות נפרדות על כל דרג.</div>
+      <div id="ibox-content"></div>
+      <div class="pbox" id="pbox"></div>
+      <button class="btn-cp" id="btn-cp" onclick="copyP()">העתק ← הדביקי ב-Claude.ai בשיחה חדשה</button>
+    </div>
+
     <div class="tab-bar">
-      <button class="tab-btn active" onclick="switchTab('tab-visual', event)">ויזואליזציה</button>
-      <button class="tab-btn" onclick="switchTab('tab-responses', event)">תשובות גולמיות</button>
+      <button class="tab-btn active" onclick="switchTab('tv',event)">ויזואליזציה</button>
+      <button class="tab-btn" onclick="switchTab('tr',event)">תשובות גולמיות</button>
     </div>
 
-    <div id="tab-visual" class="tab-pane active">
-
-      <!-- Donut -->
+    <div id="tv" class="tab-pane active">
       <div class="panel">
-        <div class="panel-title"><span class="panel-dot" style="background:var(--accent)"></span>התפלגות משיבים לפי דרג</div>
+        <div class="panel-title"><span class="pdot" style="background:var(--accent)"></span>התפלגות משיבים לפי דרג</div>
         <div style="display:flex;align-items:center;gap:2rem;flex-wrap:wrap;">
-          <div style="width:180px;height:180px;flex-shrink:0;margin:0 auto;"><canvas id="chart-levels"></canvas></div>
-          <div id="level-legend" style="flex:1;min-width:180px;"></div>
+          <div style="width:180px;height:180px;flex-shrink:0;margin:0 auto;"><canvas id="ch-donut"></canvas></div>
+          <div id="donut-leg" style="flex:1;min-width:180px;"></div>
         </div>
       </div>
 
-      <div class="section-divider">ניתוח לפי נושאים — כלל המשיבים</div>
+      <div id="rating-sec" style="display:none;">
+        <div class="dlabel">שאלות דירוג — ממוצע לפי נושא</div>
+        <div id="rating-cont"></div>
+      </div>
 
+      <div class="dlabel">ניתוח לפי נושאים — כלל המשיבים</div>
       <div class="two-col">
-        <div class="panel">
-          <div class="panel-title"><span class="panel-dot" style="background:#4A8C60"></span>חוזקות — מילות מפתח</div>
-          <div id="keywords-strengths" class="keywords-cloud"></div>
-        </div>
-        <div class="panel">
-          <div class="panel-title"><span class="panel-dot" style="background:var(--amber)"></span>אתגרים — מילות מפתח</div>
-          <div id="keywords-challenges" class="keywords-cloud"></div>
-        </div>
+        <div class="panel"><div class="panel-title"><span class="pdot" style="background:#4A8C60"></span>חוזקות — מילות מפתח</div><div id="kw-s" class="kc"></div></div>
+        <div class="panel"><div class="panel-title"><span class="pdot" style="background:var(--amber)"></span>אתגרים — מילות מפתח</div><div id="kw-c" class="kc"></div></div>
+      </div>
+      <div class="panel"><div class="panel-title"><span class="pdot" style="background:var(--blue)"></span>תרבות ארגונית</div><div id="kw-cu" class="kc"></div></div>
+      <div class="two-col">
+        <div class="panel"><div class="panel-title"><span class="pdot" style="background:#4A8C60"></span>הדרג הבכיר — תורם</div><div id="kw-sh" class="kc"></div></div>
+        <div class="panel"><div class="panel-title"><span class="pdot" style="background:var(--coral)"></span>הדרג הבכיר — מעכב</div><div id="kw-sb" class="kc"></div></div>
+      </div>
+
+      <div class="dlabel">השוואה בין דרגים</div>
+      <div class="two-col">
+        <div class="panel"><div class="panel-title"><span class="pdot" style="background:var(--blue)"></span>דרג המנהלים המשתתפים</div><div class="cwrap"><canvas id="ch-mid"></canvas></div></div>
+        <div class="panel"><div class="panel-title"><span class="pdot" style="background:var(--accent)"></span>דרג המנהלים הבכירים</div><div class="cwrap"><canvas id="ch-senior"></canvas></div></div>
       </div>
 
       <div class="panel">
-        <div class="panel-title"><span class="panel-dot" style="background:var(--blue)"></span>תרבות ארגונית — מאפיינים עיקריים</div>
-        <div id="keywords-culture" class="keywords-cloud"></div>
+        <div class="panel-title"><span class="pdot" style="background:var(--amber)"></span>שינויים נדרשים</div>
+        <div id="changes"></div>
       </div>
-
-      <div class="two-col">
-        <div class="panel">
-          <div class="panel-title"><span class="panel-dot" style="background:#4A8C60"></span>הדרג הבכיר — תורם</div>
-          <div id="keywords-senior-helps" class="keywords-cloud"></div>
-        </div>
-        <div class="panel">
-          <div class="panel-title"><span class="panel-dot" style="background:var(--coral)"></span>הדרג הבכיר — מעכב</div>
-          <div id="keywords-senior-blocks" class="keywords-cloud"></div>
-        </div>
-      </div>
-
-      <div id="rating-section" style="display:none;">
-        <div class="section-divider">שאלות דירוג — ממוצע לפי נושא</div>
-        <div id="rating-charts"></div>
-      </div>
-
-      <div class="section-divider">השוואה בין דרגים</div>
-
-      <div class="two-col">
-        <div class="panel">
-          <div class="panel-title"><span class="panel-dot" style="background:var(--blue)"></span>דרג המנהלים המשתתפים</div>
-          <div class="chart-wrap"><canvas id="chart-mid"></canvas></div>
-        </div>
-        <div class="panel">
-          <div class="panel-title"><span class="panel-dot" style="background:var(--accent)"></span>דרג המנהלים הבכירים</div>
-          <div class="chart-wrap"><canvas id="chart-senior"></canvas></div>
-        </div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-title"><span class="panel-dot" style="background:var(--amber)"></span>שינויים נדרשים — מה המנהלים מבקשים</div>
-        <div id="changes-list"></div>
-      </div>
-
     </div>
 
-    <div id="tab-responses" class="tab-pane">
-      <div id="responses-list"></div>
+    <div id="tr" class="tab-pane">
+      <div id="resp-list"></div>
     </div>
   </div>
 </div>
 
 <script>
-const Q_LABELS = { success:'חוזקות הצוות', challenges:'אתגרים ניהוליים', culture:'תרבות ארגונית', senior_helps:'סיוע הדרג הבכיר', senior_blocks:'עיכובים מהדרג הבכיר', change:'שינוי נדרש' };
-const STOPWORDS = new Set(['את','אני','הוא','היא','הם','הן','אנחנו','של','עם','על','אל','לא','כן','רק','גם','כי','אם','אבל','זה','זו','זאת','לי','לו','לה','לנו','שלי','שלו','שלה','שלנו','ב','ל','מ','כ','ו','ה','אך','כל','יש','אין','היה','היתה','כבר','עוד','מאוד','מאד','טוב','רב','בין','כך','פה','שם','שתי','שני','כך','גם','כן','רב','יותר','פחות','כמו','אחרי','לפני','עכשיו','כאן','שם','מה','מי','איך','למה','כאשר','שהוא','שהיא','שהם','אותו','אותה','אותם','אנחנו','אתם','אתן','הייתי','היינו','יהיה','תהיה','אחד','אחת','כל','כולם']);
+const MIN_MID = 8, MIN_SENIOR = 4;
+const STOP = new Set(['את','אני','הוא','היא','הם','הן','אנחנו','של','עם','על','אל','לא','כן','רק','גם','כי','אם','אבל','זה','זו','לי','לו','לה','לנו','שלי','שלו','שלה','ב','ל','מ','כ','ו','ה','אך','כל','יש','אין','היה','היתה','כבר','עוד','מאוד','טוב','רב','בין','כך','שם','יותר','פחות','כמו','אחרי','לפני','עכשיו','כאן','מה','מי','איך','למה','כאשר','אותו','אותה','אותם']);
+const QL = { success:'חוזקות הצוות', challenges:'אתגרים ניהוליים', culture:'תרבות ארגונית', senior_helps:'סיוע הדרג הבכיר', senior_blocks:'עיכובים מהדרג הבכיר', change:'שינוי נדרש' };
+let ALL = [], CHS = {};
+const orgCode = new URLSearchParams(window.location.search).get('org') || 'default';
 
-let allResponses = [], charts = {};
+async function loadData() {
+  document.getElementById('state-loading').style.display = 'block';
+  document.getElementById('state-empty').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'none';
+  try {
+    const res = await fetch('/api/responses?org=' + orgCode);
+    const data = await res.json();
+    ALL = data.responses || [];
+    document.getElementById('state-loading').style.display = 'none';
+    if (!ALL.length) { document.getElementById('state-empty').style.display = 'block'; return; }
+    document.getElementById('dashboard').style.display = 'block';
+    const org = ALL[0].manager.org || 'הארגון';
+    document.getElementById('header-org').textContent = org + ' — ' + new Date().toLocaleDateString('he-IL');
+    const mid = ALL.filter(r => r.manager.level === 'mid');
+    const senior = ALL.filter(r => r.manager.level === 'senior');
+    document.getElementById('stat-total').textContent = ALL.length;
+    document.getElementById('stat-mid').textContent = mid.length;
+    document.getElementById('stat-senior').textContent = senior.length;
+    renderIbox(ALL, mid, senior);
+    renderVisuals(ALL, mid, senior);
+    renderRatings(ALL, mid, senior);
+    renderResponses(ALL);
+  } catch(e) {
+    document.getElementById('state-loading').innerHTML = '<p style="color:#8C3A2A">שגיאה. נסי לרענן.</p>';
+  }
+}
 
-function renderRatingCharts(all, mid, senior) {
-  const section = document.getElementById('rating-section');
-  const container = document.getElementById('rating-charts');
-  const ratingData = {};
+function renderIbox(all, mid, senior) {
+  const el = document.getElementById('ibox-content');
+  const midOk = mid.length >= MIN_MID;
+  const seniorOk = senior.length >= MIN_SENIOR;
+  if (!midOk || !seniorOk) {
+    const chip = (lbl, cur, min, ok) =>
+      '<div class="pchip"><span class="pchip-label">' + lbl + '</span>' +
+      '<span class="pchip-num ' + (ok?'ok':'low') + '">' + cur + ' / ' + min + '</span>' +
+      '<span class="pchip-note" style="color:' + (ok?'var(--accent)':'var(--amber)') + '">' + (ok ? '✓ הושג' : 'חסרים עוד ' + (min-cur)) + '</span></div>';
+    el.innerHTML = '<div style="font-size:13px;color:var(--muted);margin-bottom:0.75rem;">הניתוח יופיע לאחר שיושלם מספר מינימלי של שאלונים:</div>' +
+      '<div class="pchips">' + chip('דרג המנהלים המשתתפים', mid.length, MIN_MID, midOk) + chip('דרג המנהלים הבכירים', senior.length, MIN_SENIOR, seniorOk) + '</div>';
+    return;
+  }
+  el.innerHTML = '<button class="btn-gen" onclick="genPrompt(\'program\')">✦ תובנות לתוכנית</button><button class="btn-gen" onclick="genPrompt(\'levels\')">✦ תובנות על הדרגים</button>';
+}
+
+function buildText(group) {
+  return group.map(r => {
+    const lv = r.manager.level === 'mid' ? 'דרג מנהלים' : 'דרג בכיר';
+    const lines = ['מנהל/ת: ' + r.manager.name + ' (' + lv + ')'];
+    Object.entries(r.answers || {}).forEach(([k, v]) => {
+      if (!v) return;
+      if (typeof v === 'object' && !Array.isArray(v)) {
+        const lbls = r.questionLabels && r.questionLabels[k] ? r.questionLabels[k] : {};
+        const rows = Object.entries(v).map(([i,s]) => '  ' + (lbls[i] || 'נושא '+(parseInt(i)+1)) + ': ' + s + '/5').join('\n');
+        lines.push('דירוג:\n' + rows);
+      } else {
+        lines.push((QL[k]||k) + ': ' + v);
+      }
+    });
+    return lines.join('\n');
+  }).join('\n\n---\n\n');
+}
+
+function genPrompt(type) {
+  const org = ALL[0].manager.org || 'הארגון';
+  const mid = ALL.filter(r => r.manager.level === 'mid');
+  const senior = ALL.filter(r => r.manager.level === 'senior');
+  let p = '';
+  if (type === 'program') {
+    p = 'אתה יועצת ארגונית מנוסה המתמחה בפיתוח מנהלים. להלן תשובות שאלוני אבחון מ-' + ALL.length + ' מנהלים ב' + org + '.\n\n' +
+'כתבי המלצות לתוכנית פיתוח מנהלים בהתבסס על הנתונים. הציעי פורמטים שאולי לא חשבו עליהם — כגון: מנהלים בכירים שמגיעים לדבר עם הקבוצה, פרויקטים משותפים, למידה מהצלחות פנימיות, קבוצות עמיתים, חניכה הדדית, ועוד.\nכתבי המלצות ספציפיות ומעשיות בלבד.\n\n' +
+'## תכנים מרכזיים לתוכנית\n## פורמטים מומלצים (כולל לא שגרתיים)\n## שילוב הדרג הבכיר בתוכנית\n## נקודות זהירות\n\n' +
+'להלן הנתונים:\n' + buildText(ALL);
+  } else {
+    p = 'אתה יועצת ארגונית מנוסה. להלן תשובות שאלוני אבחון מ' + org + '.\nכתבי ניתוח נפרד לכל דרג. תובנות ספציפיות בלבד.\n\n' +
+'## דרג המנהלים המשתתפים (' + mid.length + ' משיבים)\n### חוזקות ניהוליות בולטות\n### תחומים הדורשים חיזוק\n### דפוסים ניהוליים חוזרים\n### אלמנטים תרבותיים שיכולים לסייע\n\n---\n\n' +
+'## דרג המנהלים הבכירים (' + senior.length + ' משיבים)\n### חוזקות ניהוליות בולטות\n### תחומים הדורשים חיזוק\n### כיצד הם נתפסים על ידי הדרג שמתחתיהם\n### המלצה לדרג הבכיר\n\n---\n\n' +
+'נתוני דרג המנהלים המשתתפים:\n' + buildText(mid) + '\n\nנתוני דרג המנהלים הבכירים:\n' + buildText(senior);
+  }
+  document.getElementById('pbox').textContent = p;
+  document.getElementById('pbox').style.display = 'block';
+  document.getElementById('btn-cp').style.display = 'inline-flex';
+}
+
+function copyP() {
+  navigator.clipboard.writeText(document.getElementById('pbox').textContent).then(() => {
+    const btn = document.getElementById('btn-cp');
+    btn.textContent = '✓ הועתק! פתחי שיחה חדשה ב-Claude.ai והדביקי';
+    setTimeout(() => { btn.textContent = 'העתק ← הדביקי ב-Claude.ai בשיחה חדשה'; }, 3000);
+  });
+}
+
+function kws(responses, field) {
+  const freq = {};
+  responses.forEach(r => {
+    const v = r.answers && r.answers[field];
+    if (typeof v !== 'string') return;
+    v.replace(/[.,!?;:״׳"'()[\]]/g,'').split(/\s+/).forEach(w => {
+      if (w.length > 2 && !STOP.has(w)) freq[w] = (freq[w]||0) + 1;
+    });
+  });
+  return Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,16);
+}
+
+function renderKW(id, responses, field, cls) {
+  const el = document.getElementById(id);
+  const k = kws(responses, field);
+  el.innerHTML = k.length ? k.map(([w,c])=>'<span class="kt '+cls+'" style="font-size:'+Math.min(15,10+c*1.2)+'px">'+w+'</span>').join('') : '<span style="font-size:13px;color:var(--light)">אין נתונים</span>';
+}
+
+function renderVisuals(all, mid, senior) {
+  Object.values(CHS).forEach(c => { try { c.destroy(); } catch(e){} });
+  CHS = {};
+
+  CHS.d = new Chart(document.getElementById('ch-donut').getContext('2d'), {
+    type:'doughnut',
+    data:{ labels:['דרג מנהלים','דרג בכיר'], datasets:[{ data:[mid.length,senior.length], backgroundColor:['#1A4A6B','#2D5A3D'], borderWidth:0 }] },
+    options:{ cutout:'70%', plugins:{ legend:{ display:false } }, responsive:true, maintainAspectRatio:false }
+  });
+
+  document.getElementById('donut-leg').innerHTML =
+    '<div style="display:flex;flex-direction:column;gap:12px;">' +
+    '<div style="display:flex;align-items:center;gap:10px;"><div style="width:12px;height:12px;border-radius:50%;background:#1A4A6B;flex-shrink:0"></div><div><div style="font-size:13px;font-weight:500;color:var(--muted)">דרג המנהלים המשתתפים</div><div style="font-size:24px;font-weight:300">'+mid.length+' משיבים</div></div></div>' +
+    '<div style="display:flex;align-items:center;gap:10px;"><div style="width:12px;height:12px;border-radius:50%;background:#2D5A3D;flex-shrink:0"></div><div><div style="font-size:13px;font-weight:500;color:var(--muted)">דרג המנהלים הבכירים</div><div style="font-size:24px;font-weight:300">'+senior.length+' משיבים</div></div></div>' +
+    '</div>';
+
+  renderKW('kw-s', all, 'success', 'kg');
+  renderKW('kw-c', all, 'challenges', 'ka');
+  renderKW('kw-cu', all, 'culture', 'kb');
+  renderKW('kw-sh', all, 'senior_helps', 'kg');
+  renderKW('kw-sb', all, 'senior_blocks', 'kr');
+
+  const rlbls = ['חוזקות','אתגרים','תרבות','תמיכת\nדרג בכיר','חסמי\nדרג בכיר'];
+  const flds = ['success','challenges','culture','senior_helps','senior_blocks'];
+  const rd = g => flds.map(f => g.length===0?0:Math.min(10,Math.round(g.reduce((s,r)=>s+(typeof r.answers?.[f]==='string'?r.answers[f].length/25:0),0)/g.length*2)));
+
+  const mkRadar = (id, data, color) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (data.every(v=>v===0)) { el.parentElement.innerHTML='<p style="font-size:13px;color:var(--light);text-align:center;padding:2rem;">אין נתונים לדרג זה</p>'; return; }
+    CHS[id] = new Chart(el.getContext('2d'), {
+      type:'radar',
+      data:{ labels:rlbls, datasets:[{ data, backgroundColor:color+'22', borderColor:color, borderWidth:2, pointBackgroundColor:color, pointRadius:3 }] },
+      options:{ responsive:true, maintainAspectRatio:false, scales:{ r:{ min:0, max:10, ticks:{ display:false }, grid:{ color:'#E2DDD8' }, pointLabels:{ font:{ size:11, family:'Heebo' }, color:'#6B6B65' } } }, plugins:{ legend:{ display:false } } }
+    });
+  };
+  mkRadar('ch-mid', rd(mid), '#1A4A6B');
+  mkRadar('ch-senior', rd(senior), '#2D5A3D');
+
+  const cEl = document.getElementById('changes');
+  const ch = all.map(r=>({ name:r.manager.name, level:r.manager.level, text:(r.answers&&r.answers.change)||'' })).filter(c=>c.text);
+  cEl.innerHTML = ch.map(c=>'<div class="irow"><div class="idot" style="background:'+(c.level==='mid'?'#1A4A6B':'#2D5A3D')+'"></div><div class="itext"><strong style="font-size:12px;color:var(--muted)">'+c.name+' · '+(c.level==='mid'?'דרג מנהלים':'דרג בכיר')+'</strong><br>'+c.text+'</div></div>').join('') || '<p style="font-size:13px;color:var(--light)">אין נתונים</p>';
+}
+
+function renderRatings(all, mid, senior) {
+  const sec = document.getElementById('rating-sec');
+  const cont = document.getElementById('rating-cont');
+  const rd = {};
   all.forEach(r => {
-    Object.entries(r.answers || {}).forEach(([qId, val]) => {
-      if (val && typeof val === 'object' && !Array.isArray(val) && Object.keys(val).some(k => !isNaN(k))) {
-        if (!ratingData[qId]) ratingData[qId] = { items: {}, midItems: {}, seniorItems: {}, labels: {} };
-        Object.entries(val).forEach(([idx, score]) => {
+    Object.entries(r.answers||{}).forEach(([qId,val]) => {
+      if (val && typeof val==='object' && !Array.isArray(val) && Object.keys(val).some(k=>!isNaN(k))) {
+        if (!rd[qId]) rd[qId] = { a:{}, m:{}, s:{}, lbls:{} };
+        Object.entries(val).forEach(([idx,score]) => {
           const i = parseInt(idx);
-          if (!ratingData[qId].items[i]) ratingData[qId].items[i] = [];
-          ratingData[qId].items[i].push(Number(score));
-          const group = r.manager.level === 'mid' ? 'midItems' : 'seniorItems';
-          if (!ratingData[qId][group][i]) ratingData[qId][group][i] = [];
-          ratingData[qId][group][i].push(Number(score));
-          if (r.questionLabels?.[qId]?.[i]) ratingData[qId].labels[i] = r.questionLabels[qId][i];
+          const push = obj => { if (!obj[i]) obj[i]=[]; obj[i].push(Number(score)); };
+          push(rd[qId].a);
+          push(r.manager.level==='mid' ? rd[qId].m : rd[qId].s);
+          if (r.questionLabels && r.questionLabels[qId] && r.questionLabels[qId][i]) rd[qId].lbls[i] = r.questionLabels[qId][i];
         });
       }
     });
   });
-  const keys = Object.keys(ratingData);
-  if (!keys.length) { section.style.display = 'none'; return; }
-  section.style.display = 'block';
-  container.innerHTML = '';
-  Object.keys(charts).filter(k => k.startsWith('rating_')).forEach(k => { try { charts[k].destroy(); } catch(e){} delete charts[k]; });
-
+  const keys = Object.keys(rd);
+  if (!keys.length) { sec.style.display='none'; return; }
+  sec.style.display='block'; cont.innerHTML='';
+  Object.keys(CHS).filter(k=>k.startsWith('rt_')).forEach(k=>{ try{CHS[k].destroy();}catch(e){} delete CHS[k]; });
+  const avg = arr => arr&&arr.length ? Math.round(arr.reduce((s,v)=>s+v,0)/arr.length*10)/10 : 0;
   keys.forEach(qId => {
-    const data = ratingData[qId];
-    const indices = Object.keys(data.items).map(Number).sort((a,b)=>a-b);
-    if (!indices.length) return;
-    const labels = indices.map(i => data.labels[i] || ('נושא ' + (i+1)));
-    const avg = arr => arr.length ? Math.round(arr.reduce((s,v)=>s+v,0)/arr.length*10)/10 : 0;
-    const avgAll = indices.map(i => avg(data.items[i]||[]));
-    const avgMid = indices.map(i => avg(data.midItems[i]||[]));
-    const avgSenior = indices.map(i => avg(data.seniorItems[i]||[]));
+    const d = rd[qId];
+    const idxs = Object.keys(d.a).map(Number).sort((a,b)=>a-b);
+    if (!idxs.length) return;
+    const labels = idxs.map(i=>d.lbls[i]||'נושא '+(i+1));
+    const ds = [{ label:'כלל המשיבים', data:idxs.map(i=>avg(d.a[i])), backgroundColor:'#4A4A8C33', borderColor:'#4A4A8C', borderWidth:2 }];
+    if (mid.length) ds.push({ label:'דרג מנהלים', data:idxs.map(i=>avg(d.m[i])), backgroundColor:'#1A4A6B33', borderColor:'#1A4A6B', borderWidth:2 });
+    if (senior.length) ds.push({ label:'דרג בכיר', data:idxs.map(i=>avg(d.s[i])), backgroundColor:'#2D5A3D33', borderColor:'#2D5A3D', borderWidth:2 });
     const panel = document.createElement('div');
     panel.className = 'panel';
-    const cid = 'rating_' + qId;
-    const h = Math.max(220, indices.length * 42);
-    panel.innerHTML = '<div class="panel-title"><span class="panel-dot" style="background:#4A4A8C"></span>ממוצע דירוג לפי נושא (סולם 1-5)</div><div style="position:relative;height:' + h + 'px;"><canvas id="' + cid + '"></canvas></div>';
-    container.appendChild(panel);
-    const datasets = [{ label: 'כלל המשיבים', data: avgAll, backgroundColor: '#4A4A8C33', borderColor: '#4A4A8C', borderWidth: 2 }];
-    if (mid.length) datasets.push({ label: 'דרג מנהלים', data: avgMid, backgroundColor: '#1A4A6B33', borderColor: '#1A4A6B', borderWidth: 2 });
-    if (senior.length) datasets.push({ label: 'דרג בכיר', data: avgSenior, backgroundColor: '#2D5A3D33', borderColor: '#2D5A3D', borderWidth: 2 });
-    charts[cid] = new Chart(document.getElementById(cid).getContext('2d'), {
-      type: 'bar',
-      data: { labels, datasets },
-      options: {
-        indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-        scales: { x: { min:0, max:5, ticks:{stepSize:1,font:{size:11}}, grid:{color:'#E2DDD8'} }, y: { ticks:{font:{size:11,family:'Heebo'},color:'#6B6B65'} } },
-        plugins: { legend: { position:'bottom', labels:{font:{size:11,family:'Heebo'},boxWidth:12} } }
-      }
+    const cid = 'rt_'+qId;
+    const h = Math.max(220, idxs.length*42);
+    panel.innerHTML = '<div class="panel-title"><span class="pdot" style="background:#4A4A8C"></span>ממוצע דירוג לפי נושא (סולם 1–5)</div><div style="position:relative;height:'+h+'px;"><canvas id="'+cid+'"></canvas></div>';
+    cont.appendChild(panel);
+    CHS[cid] = new Chart(document.getElementById(cid).getContext('2d'), {
+      type:'bar', data:{ labels, datasets:ds },
+      options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, scales:{ x:{ min:0,max:5,ticks:{stepSize:1,font:{size:11}},grid:{color:'#E2DDD8'} }, y:{ ticks:{font:{size:11,family:'Heebo'},color:'#6B6B65'} } }, plugins:{ legend:{ position:'bottom', labels:{font:{size:11,family:'Heebo'},boxWidth:12} } } }
     });
   });
-}
-
-async function loadData() {
-  document.getElementById('loading-state').style.display = 'block';
-  document.getElementById('empty-state').style.display = 'none';
-  document.getElementById('dashboard').style.display = 'none';
-  try {
-    const orgCode = new URLSearchParams(window.location.search).get('org') || 'default';
-    const res = await fetch('/api/responses?org=' + orgCode);
-    const data = await res.json();
-    allResponses = data.responses || [];
-    document.getElementById('loading-state').style.display = 'none';
-    if (allResponses.length === 0) { document.getElementById('empty-state').style.display = 'block'; return; }
-    document.getElementById('dashboard').style.display = 'block';
-    const org = allResponses[0]?.manager?.org || 'הארגון';
-    document.getElementById('header-org').textContent = org + ' — ' + new Date().toLocaleDateString('he-IL');
-    const mid = allResponses.filter(r => r.manager.level === 'mid');
-    const senior = allResponses.filter(r => r.manager.level === 'senior');
-    document.getElementById('stat-total').textContent = allResponses.length;
-    document.getElementById('stat-mid').textContent = mid.length;
-    document.getElementById('stat-senior').textContent = senior.length;
-    renderVisuals(allResponses, mid, senior);
-    renderRatingCharts(allResponses, mid, senior);
-    renderResponses(allResponses);
-  } catch(e) {
-    document.getElementById('loading-state').innerHTML = '<p style="color:#8C3A2A">שגיאה בטעינת הנתונים. נסי לרענן.</p>';
-  }
-}
-
-function extractKeywords(responses, field) {
-  const text = responses.map(r => r.answers?.[field] || '').join(' ');
-  const words = text.replace(/[.,!?;:״׳"'()[\]]/g, '').split(/\s+/);
-  const freq = {};
-  words.forEach(w => { if (w.length > 2 && !STOPWORDS.has(w)) freq[w] = (freq[w]||0)+1; });
-  return Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,16);
-}
-
-function renderKeywords(elId, responses, field, colorClass) {
-  const el = document.getElementById(elId);
-  const kws = extractKeywords(responses, field);
-  if (!kws.length) { el.innerHTML='<span style="font-size:13px;color:var(--text-light)">אין נתונים עדיין</span>'; return; }
-  el.innerHTML = kws.map(([w,c]) => `<span class="kw-tag ${colorClass}" style="font-size:${Math.min(15,10+c*1.2)}px">${w}</span>`).join('');
-}
-
-function renderVisuals(all, mid, senior) {
-  Object.values(charts).forEach(c => { try { c.destroy(); } catch(e){} });
-  charts = {};
-
-  const ctx1 = document.getElementById('chart-levels').getContext('2d');
-  charts.levels = new Chart(ctx1, {
-    type: 'doughnut',
-    data: { labels:['דרג המנהלים','דרג בכיר'], datasets:[{ data:[mid.length, senior.length], backgroundColor:['#1A4A6B','#2D5A3D'], borderWidth:0 }] },
-    options: { cutout:'70%', plugins:{ legend:{ display:false } }, responsive:true, maintainAspectRatio:false }
-  });
-
-  document.getElementById('level-legend').innerHTML = `
-    <div style="display:flex;flex-direction:column;gap:12px;">
-      <div style="display:flex;align-items:center;gap:10px;">
-        <div style="width:12px;height:12px;border-radius:50%;background:#1A4A6B;flex-shrink:0;"></div>
-        <div><div style="font-size:13px;font-weight:500;color:var(--text-muted)">דרג המנהלים המשתתפים</div><div style="font-size:24px;font-weight:300;">${mid.length} משיבים</div></div>
-      </div>
-      <div style="display:flex;align-items:center;gap:10px;">
-        <div style="width:12px;height:12px;border-radius:50%;background:#2D5A3D;flex-shrink:0;"></div>
-        <div><div style="font-size:13px;font-weight:500;color:var(--text-muted)">דרג המנהלים הבכירים</div><div style="font-size:24px;font-weight:300;">${senior.length} משיבים</div></div>
-      </div>
-    </div>`;
-
-  renderKeywords('keywords-strengths', all, 'success', 'kw-green');
-  renderKeywords('keywords-challenges', all, 'challenges', 'kw-amber');
-  renderKeywords('keywords-culture', all, 'culture', 'kw-blue');
-  renderKeywords('keywords-senior-helps', all, 'senior_helps', 'kw-green');
-  renderKeywords('keywords-senior-blocks', all, 'senior_blocks', 'kw-coral');
-
-  const radarLabels = ['חוזקות','אתגרים','תרבות','תמיכת\nדרג בכיר','חסמי\nדרג בכיר'];
-  const radarScore = (group, field) => group.length === 0 ? 0 : Math.min(10, Math.round(group.reduce((s,r) => s+(r.answers?.[field]?.length||0)/25, 0)/group.length*2));
-  const radarData = (group) => ['success','challenges','culture','senior_helps','senior_blocks'].map(f => radarScore(group, f));
-
-  const makeRadar = (canvasId, data, color) => {
-    const el = document.getElementById(canvasId);
-    if (!el) return;
-    const ctx = el.getContext('2d');
-    charts[canvasId] = new Chart(ctx, {
-      type: 'radar',
-      data: { labels: radarLabels, datasets:[{ data, backgroundColor: color+'22', borderColor: color, borderWidth:2, pointBackgroundColor: color, pointRadius:3 }] },
-      options: { responsive:true, maintainAspectRatio:false, scales:{ r:{ min:0, max:10, ticks:{ display:false }, grid:{ color:'#E2DDD8' }, pointLabels:{ font:{ size:11, family:'Heebo' }, color:'#6B6B65' } } }, plugins:{ legend:{ display:false } } }
-    });
-  };
-
-  if (mid.length > 0) makeRadar('chart-mid', radarData(mid), '#1A4A6B');
-  else document.getElementById('chart-mid').parentElement.innerHTML = '<p style="font-size:13px;color:var(--text-light);text-align:center;padding:2rem;">אין נתונים לדרג זה</p>';
-
-  if (senior.length > 0) makeRadar('chart-senior', radarData(senior), '#2D5A3D');
-  else document.getElementById('chart-senior').parentElement.innerHTML = '<p style="font-size:13px;color:var(--text-light);text-align:center;padding:2rem;">אין נתונים לדרג זה</p>';
-
-  const changeEl = document.getElementById('changes-list');
-  const changes = all.map(r => ({ name:r.manager.name, level:r.manager.level, text:r.answers?.change||'' })).filter(c=>c.text);
-  changeEl.innerHTML = changes.map(c => `
-    <div class="insight-row">
-      <div class="insight-dot" style="background:${c.level==='mid'?'#1A4A6B':'#2D5A3D'}"></div>
-      <div class="insight-text"><strong style="font-size:12px;color:var(--text-muted);">${c.name} · ${c.level==='mid'?'דרג מנהלים':'דרג בכיר'}</strong><br>${c.text}</div>
-    </div>`).join('') || '<p style="font-size:13px;color:var(--text-light)">אין נתונים עדיין</p>';
 }
 
 function renderResponses(all) {
-  const el = document.getElementById('responses-list');
+  const el = document.getElementById('resp-list');
   el.innerHTML = '';
   all.forEach(r => {
     const div = document.createElement('div');
-    div.className = 'response-card';
-    const ll = r.manager.level==='mid'?'דרג המנהלים':'דרג בכיר';
-    const bc = r.manager.level==='mid'?'badge-mid':'badge-senior';
+    div.className = 'rc';
+    const ll = r.manager.level==='mid'?'דרג מנהלים':'דרג בכיר';
+    const bc = r.manager.level==='mid'?'bdg-mid':'bdg-senior';
     let qa = '';
-    Object.entries(r.answers||{}).forEach(([k,v]) => { if(v&&Q_LABELS[k]) qa+=`<div class="response-qa"><div class="response-q">${Q_LABELS[k]}</div><div class="response-a">${v}</div></div>`; });
-    div.innerHTML = `<div class="response-header"><span class="response-name">${r.manager.name}</span><span class="level-badge ${bc}">${ll}</span></div>${qa}`;
+    Object.entries(r.answers||{}).forEach(([k,v]) => {
+      if (!v) return;
+      let aHtml = '';
+      if (typeof v==='object'&&!Array.isArray(v)) {
+        const lbls = (r.questionLabels&&r.questionLabels[k]) ? r.questionLabels[k] : {};
+        aHtml = Object.entries(v).map(([i,s])=>'<span style="font-size:12px;background:var(--bg);padding:2px 8px;border-radius:4px;margin-left:6px;">'+(lbls[i]||'נושא '+(parseInt(i)+1))+': <b>'+s+'</b>/5</span>').join('');
+      } else { aHtml = String(v); }
+      qa += '<div class="rqa"><div class="rq">'+(QL[k]||k)+'</div><div class="ra">'+aHtml+'</div></div>';
+    });
+    div.innerHTML = '<div class="rc-header"><span class="rc-name">'+r.manager.name+'</span><span class="bdg '+bc+'">'+ll+'</span></div>'+qa;
     el.appendChild(div);
   });
 }
 
-function switchTab(tabId, e) {
+function switchTab(id, e) {
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
-  document.getElementById(tabId).classList.add('active');
-  if(e) e.target.classList.add('active');
+  document.getElementById(id).classList.add('active');
+  if (e) e.target.classList.add('active');
 }
 
 loadData();
