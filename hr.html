@@ -185,11 +185,19 @@ async function loadData() {
     ALL = data.responses || [];
     document.getElementById('state-loading').style.display = 'none';
     if (!ALL.length) { document.getElementById('state-empty').style.display = 'block'; return; }
+    const mid = ALL.filter(r => r.manager.level === 'mid');
+    const senior = ALL.filter(r => r.manager.level === 'senior');
+    if (mid.length < MIN_MID) {
+      document.getElementById('state-empty').style.display = 'block';
+      document.getElementById('state-empty').innerHTML =
+        '<div style="font-size:48px;margin-bottom:1rem;">⚠️</div>' +
+        '<h2 style="font-size:20px;font-weight:500;margin-bottom:0.75rem;">אין מספיק משתתפים שענו</h2>' +
+        '<p style="font-size:14px;color:var(--muted);line-height:1.8;">ענו עד כה <strong>' + mid.length + '</strong> מנהלים משתתפים מתוך <strong>' + MIN_MID + '</strong> הנדרשים.<br>הדשבורד יפתח לאחר שיושלם המינימום.</p>';
+      return;
+    }
     document.getElementById('dashboard').style.display = 'block';
     const org = ALL[0].manager.org || 'הארגון';
     document.getElementById('header-org').textContent = org + ' — ' + new Date().toLocaleDateString('he-IL');
-    const mid = ALL.filter(r => r.manager.level === 'mid');
-    const senior = ALL.filter(r => r.manager.level === 'senior');
     document.getElementById('stat-total').textContent = ALL.length;
     document.getElementById('stat-mid').textContent = mid.length;
     document.getElementById('stat-senior').textContent = senior.length;
