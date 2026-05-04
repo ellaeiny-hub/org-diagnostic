@@ -169,7 +169,7 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 </div>
 
 <script>
-const MIN_MID = 8, MIN_SENIOR = 4;
+const MIN_MID = 8;
 const STOP = new Set(['את','אני','הוא','היא','הם','הן','אנחנו','של','עם','על','אל','לא','כן','רק','גם','כי','אם','אבל','זה','זו','לי','לו','לה','לנו','שלי','שלו','שלה','ב','ל','מ','כ','ו','ה','אך','כל','יש','אין','היה','היתה','כבר','עוד','מאוד','טוב','רב','בין','כך','שם','יותר','פחות','כמו','אחרי','לפני','עכשיו','כאן','מה','מי','איך','למה','כאשר','אותו','אותה','אותם']);
 const QL = { success:'חוזקות הצוות', challenges:'אתגרים ניהוליים', culture:'תרבות ארגונית', senior_helps:'סיוע הדרג הבכיר', senior_blocks:'עיכובים מהדרג הבכיר', change:'שינוי נדרש' };
 let ALL = [], CHS = {};
@@ -213,14 +213,14 @@ async function loadData() {
 function renderIbox(all, mid, senior) {
   const el = document.getElementById('ibox-content');
   const midOk = mid.length >= MIN_MID;
-  const seniorOk = senior.length >= MIN_SENIOR;
-  if (!midOk || !seniorOk) {
+  
+  if (!midOk) {
     const chip = (lbl, cur, min, ok) =>
       '<div class="pchip"><span class="pchip-label">' + lbl + '</span>' +
       '<span class="pchip-num ' + (ok?'ok':'low') + '">' + cur + ' / ' + min + '</span>' +
       '<span class="pchip-note" style="color:' + (ok?'var(--accent)':'var(--amber)') + '">' + (ok ? '✓ הושג' : 'חסרים עוד ' + (min-cur)) + '</span></div>';
     el.innerHTML = '<div style="font-size:13px;color:var(--muted);margin-bottom:0.75rem;">הניתוח יופיע לאחר שיושלם מספר מינימלי של שאלונים:</div>' +
-      '<div class="pchips">' + chip('דרג המנהלים המשתתפים', mid.length, MIN_MID, midOk) + chip('דרג המנהלים הבכירים', senior.length, MIN_SENIOR, seniorOk) + '</div>';
+      '<div class="pchips">' + chip('דרג המנהלים המשתתפים', mid.length, MIN_MID, midOk) + '</div>';
     return;
   }
   el.innerHTML = '<button class="btn-gen" onclick="genPrompt(\'program\')">✦ תובנות לתוכנית</button><button class="btn-gen" onclick="genPrompt(\'levels\')">✦ תובנות על הדרגים</button>';
