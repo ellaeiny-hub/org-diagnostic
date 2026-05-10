@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>אבחון ארגוני — דשבורד HR</title>
+<title>××××× ××¨××× × â ××©×××¨× HR</title>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
@@ -87,47 +87,63 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } .stats-row { grid-template-columns: 1fr 1fr; } }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 .panel, .rc, .stat-card { animation: fadeIn 0.3s ease; }
+
+.insight-box {
+  background: var(--surface);
+  border-right: 3px solid var(--accent);
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  font-size: 13px;
+  line-height: 1.75;
+  color: var(--text);
+  margin-top: 0.5rem;
+}
+.insight-loading {
+  font-size: 12px;
+  color: var(--muted);
+  font-style: italic;
+}
 </style>
 </head>
 <body>
 <div class="header">
   <div>
-    <div class="header-title">דשבורד HR — אבחון ארגוני</div>
-    <div class="header-sub" id="header-org">טוען נתונים...</div>
+    <div class="header-title">××©×××¨× HR â ××××× ××¨××× ×</div>
+    <div class="header-sub" id="header-org">×××¢× × ×ª×× ××...</div>
   </div>
   <div style="display:flex;align-items:center;gap:12px;">
-    <button class="btn-refresh" onclick="loadData()">↻ רענן</button>
-    <span class="logo">אבחון ארגוני</span>
+    <button class="btn-refresh" onclick="loadData()">â» ×¨×¢× ×</button>
+    <span class="logo">××××× ××¨××× ×</span>
   </div>
 </div>
 
 <div class="main">
-  <div id="state-loading"><div class="spinner"></div><p>טוען תשובות...</p></div>
-  <div id="state-empty"><h2>טרם נאספו תשובות</h2><p>שלחי את קישור השאלון למנהלים.<br>הנתונים יופיעו כאן ברגע שהם ימלאו.</p></div>
+  <div id="state-loading"><div class="spinner"></div><p>×××¢× ×ª×©××××ª...</p></div>
+  <div id="state-empty"><h2>××¨× × ××¡×¤× ×ª×©××××ª</h2><p>×©××× ××ª ×§××©××¨ ××©×××× ××× ××××.<br>×× ×ª×× ×× ×××¤××¢× ××× ××¨××¢ ×©×× ×××××.</p></div>
 
   <div id="dashboard">
     <div class="stats-row">
-      <div class="stat-card"><div class="stat-label">סה"כ ממלאים</div><div class="stat-value" id="stat-total">0</div></div>
-      <div class="stat-card"><div class="stat-label">דרג מנהלים</div><div class="stat-value" id="stat-mid">0</div><div class="stat-sub">דרג המשתתפים</div></div>
-      <div class="stat-card"><div class="stat-label">דרג בכיר</div><div class="stat-value" id="stat-senior">0</div><div class="stat-sub">מנהלי המשתתפים</div></div>
+      <div class="stat-card"><div class="stat-label">×¡×"× ××××××</div><div class="stat-value" id="stat-total">0</div></div>
+      <div class="stat-card"><div class="stat-label">××¨× ×× ××××</div><div class="stat-value" id="stat-mid">0</div><div class="stat-sub">××¨× ×××©×ª×ª×¤××</div></div>
+      <div class="stat-card"><div class="stat-label">××¨× ××××¨</div><div class="stat-value" id="stat-senior">0</div><div class="stat-sub">×× ××× ×××©×ª×ª×¤××</div></div>
     </div>
 
     <div class="ibox">
-      <div class="ibox-title">✦ תובנות AI לתוכנית ולדרגים</div>
-      <div class="ibox-sub">לאחר איסוף מינימום של 8 מנהלים משתתפים ו-4 מנהלים בכירים, יוצרו שני סוגי ניתוח: המלצות לתוכנית הפיתוח, ותובנות נפרדות על כל דרג.</div>
+      <div class="ibox-title">â¦ ×ª××× ××ª AI ××ª××× ××ª ××××¨×××</div>
+      <div class="ibox-sub">××××¨ ×××¡××£ ××× ×××× ×©× 8 ×× ×××× ××©×ª×ª×¤×× ×-4 ×× ×××× ××××¨××, ×××¦×¨× ×©× × ×¡××× × ××ª××: ××××¦××ª ××ª××× ××ª ××¤××ª××, ××ª××× ××ª × ×¤×¨×××ª ×¢× ×× ××¨×.</div>
       <div id="ibox-content"></div>
       <div class="pbox" id="pbox"></div>
-      <button class="btn-cp" id="btn-cp" onclick="copyP()">העתק ← הדביקי ב-Claude.ai בשיחה חדשה</button>
+      <button class="btn-cp" id="btn-cp" onclick="copyP()">××¢×ª×§ â ×××××§× ×-Claude.ai ××©××× ×××©×</button>
     </div>
 
     <div class="tab-bar">
-      <button class="tab-btn active" onclick="switchTab('tv',event)">ויזואליזציה</button>
-      <button class="tab-btn" onclick="switchTab('tr',event)">תשובות גולמיות</button>
+      <button class="tab-btn active" onclick="switchTab('tv',event)">×××××××××¦××</button>
+      <button class="tab-btn" onclick="switchTab('tr',event)">×ª×©××××ª ×××××××ª</button>
     </div>
 
     <div id="tv" class="tab-pane active">
       <div class="panel">
-        <div class="panel-title"><span class="pdot" style="background:var(--accent)"></span>התפלגות משיבים לפי דרג</div>
+        <div class="panel-title"><span class="pdot" style="background:var(--accent)"></span>××ª×¤××××ª ××©×××× ××¤× ××¨×</div>
         <div style="display:flex;align-items:center;gap:2rem;flex-wrap:wrap;">
           <div style="width:180px;height:180px;flex-shrink:0;margin:0 auto;"><canvas id="ch-donut"></canvas></div>
           <div id="donut-leg" style="flex:1;min-width:180px;"></div>
@@ -135,29 +151,29 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
       </div>
 
       <div id="rating-sec" style="display:none;">
-        <div class="dlabel">שאלות דירוג — ממוצע לפי נושא</div>
+        <div class="dlabel">×©××××ª ×××¨×× â ××××¦×¢ ××¤× × ××©×</div>
         <div id="rating-cont"></div>
       </div>
 
-      <div class="dlabel">ניתוח לפי נושאים — כלל המשיבים</div>
+      <div class="dlabel">× ××ª×× ××¤× × ××©××× â ××× ×××©××××</div>
       <div class="two-col">
-        <div class="panel"><div class="panel-title"><span class="pdot" style="background:#4A8C60"></span>חוזקות — מילות מפתח</div><div id="kw-s" class="kc"></div></div>
-        <div class="panel"><div class="panel-title"><span class="pdot" style="background:var(--amber)"></span>אתגרים — מילות מפתח</div><div id="kw-c" class="kc"></div></div>
+        <div class="panel"><div class="panel-title"><span class="pdot" style="background:#4A8C60"></span>××××§××ª â ×××××ª ××¤×ª×</div><div id="kw-s" class="kc"></div></div>
+        <div class="panel"><div class="panel-title"><span class="pdot" style="background:var(--amber)"></span>××ª××¨×× â ×××××ª ××¤×ª×</div><div id="kw-c" class="kc"></div></div>
       </div>
-      <div class="panel"><div class="panel-title"><span class="pdot" style="background:var(--blue)"></span>תרבות ארגונית</div><div id="kw-cu" class="kc"></div></div>
+      <div class="panel"><div class="panel-title"><span class="pdot" style="background:var(--blue)"></span>×ª×¨×××ª ××¨××× ××ª</div><div id="kw-cu" class="kc"></div></div>
       <div class="two-col">
-        <div class="panel"><div class="panel-title"><span class="pdot" style="background:#4A8C60"></span>הדרג הבכיר — תורם</div><div id="kw-sh" class="kc"></div></div>
-        <div class="panel"><div class="panel-title"><span class="pdot" style="background:var(--coral)"></span>הדרג הבכיר — מעכב</div><div id="kw-sb" class="kc"></div></div>
+        <div class="panel"><div class="panel-title"><span class="pdot" style="background:#4A8C60"></span>×××¨× ×××××¨ â ×ª××¨×</div><div id="kw-sh" class="kc"></div></div>
+        <div class="panel"><div class="panel-title"><span class="pdot" style="background:var(--coral)"></span>×××¨× ×××××¨ â ××¢××</div><div id="kw-sb" class="kc"></div></div>
       </div>
 
-      <div class="dlabel">השוואה בין דרגים</div>
+      <div class="dlabel">××©×××× ××× ××¨×××</div>
       <div class="two-col">
-        <div class="panel"><div class="panel-title"><span class="pdot" style="background:var(--blue)"></span>דרג המנהלים המשתתפים</div><div class="cwrap"><canvas id="ch-mid"></canvas></div></div>
-        <div class="panel"><div class="panel-title"><span class="pdot" style="background:var(--accent)"></span>דרג המנהלים הבכירים</div><div class="cwrap"><canvas id="ch-senior"></canvas></div></div>
+        <div class="panel"><div class="panel-title"><span class="pdot" style="background:var(--blue)"></span>××¨× ××× ×××× ×××©×ª×ª×¤××</div><div class="cwrap"><canvas id="ch-mid"></canvas></div></div>
+        <div class="panel"><div class="panel-title"><span class="pdot" style="background:var(--accent)"></span>××¨× ××× ×××× ×××××¨××</div><div class="cwrap"><canvas id="ch-senior"></canvas></div></div>
       </div>
 
       <div class="panel">
-        <div class="panel-title"><span class="pdot" style="background:var(--amber)"></span>שינויים נדרשים</div>
+        <div class="panel-title"><span class="pdot" style="background:var(--amber)"></span>×©×× ×××× × ××¨×©××</div>
         <div id="changes"></div>
       </div>
     </div>
@@ -170,8 +186,8 @@ body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--tex
 
 <script>
 const MIN_MID = 8;
-const STOP = new Set(['את','אני','הוא','היא','הם','הן','אנחנו','של','עם','על','אל','לא','כן','רק','גם','כי','אם','אבל','זה','זו','לי','לו','לה','לנו','שלי','שלו','שלה','ב','ל','מ','כ','ו','ה','אך','כל','יש','אין','היה','היתה','כבר','עוד','מאוד','טוב','רב','בין','כך','שם','יותר','פחות','כמו','אחרי','לפני','עכשיו','כאן','מה','מי','איך','למה','כאשר','אותו','אותה','אותם']);
-const QL = { success:'חוזקות הצוות', challenges:'אתגרים ניהוליים', culture:'תרבות ארגונית', senior_helps:'סיוע הדרג הבכיר', senior_blocks:'עיכובים מהדרג הבכיר', change:'שינוי נדרש' };
+const STOP = new Set(['××ª','×× ×','×××','×××','××','××','×× ×× ×','×©×','×¢×','×¢×','××','××','××','×¨×§','××','××','××','×××','××','××','××','××','××','×× ×','×©××','×©××','×©××','×','×','×','×','×','×','××','××','××©','×××','×××','×××ª×','×××¨','×¢××','××××','×××','×¨×','×××','××','×©×','×××ª×¨','×¤×××ª','×××','×××¨×','××¤× ×','×¢××©××','×××','××','××','×××','×××','×××©×¨','×××ª×','×××ª×','×××ª×']);
+const QL = { success:'××××§××ª ××¦×××ª', challenges:'××ª××¨×× × ×××××××', culture:'×ª×¨×××ª ××¨××× ××ª', senior_helps:'×¡×××¢ ×××¨× ×××××¨', senior_blocks:'×¢×××××× ××××¨× ×××××¨', change:'×©×× ×× × ××¨×©' };
 let ALL = [], CHS = {};
 const orgCode = new URLSearchParams(window.location.search).get('org') || 'default';
 
@@ -190,14 +206,14 @@ async function loadData() {
     if (mid.length < MIN_MID) {
       document.getElementById('state-empty').style.display = 'block';
       document.getElementById('state-empty').innerHTML =
-        '<div style="font-size:48px;margin-bottom:1rem;">⚠️</div>' +
-        '<h2 style="font-size:20px;font-weight:500;margin-bottom:0.75rem;">אין מספיק משתתפים שענו</h2>' +
-        '<p style="font-size:14px;color:var(--muted);line-height:1.8;">ענו עד כה <strong>' + mid.length + '</strong> מנהלים משתתפים מתוך <strong>' + MIN_MID + '</strong> הנדרשים.<br>הדשבורד יפתח לאחר שיושלם המינימום.</p>';
+        '<div style="font-size:48px;margin-bottom:1rem;">â ï¸</div>' +
+        '<h2 style="font-size:20px;font-weight:500;margin-bottom:0.75rem;">××× ××¡×¤××§ ××©×ª×ª×¤×× ×©×¢× ×</h2>' +
+        '<p style="font-size:14px;color:var(--muted);line-height:1.8;">×¢× × ×¢× ×× <strong>' + mid.length + '</strong> ×× ×××× ××©×ª×ª×¤×× ××ª×× <strong>' + MIN_MID + '</strong> ×× ××¨×©××.<br>×××©×××¨× ××¤×ª× ××××¨ ×©×××©×× ×××× ××××.</p>';
       return;
     }
     document.getElementById('dashboard').style.display = 'block';
-    const org = ALL[0].manager.org || 'הארגון';
-    document.getElementById('header-org').textContent = org + ' — ' + new Date().toLocaleDateString('he-IL');
+    const org = ALL[0].manager.org || '×××¨×××';
+    document.getElementById('header-org').textContent = org + ' â ' + new Date().toLocaleDateString('he-IL');
     document.getElementById('stat-total').textContent = ALL.length;
     document.getElementById('stat-mid').textContent = mid.length;
     document.getElementById('stat-senior').textContent = senior.length;
@@ -205,8 +221,9 @@ async function loadData() {
     renderVisuals(ALL, mid, senior);
     renderRatings(ALL, mid, senior);
     renderResponses(ALL);
+    loadInsights();
   } catch(e) {
-    document.getElementById('state-loading').innerHTML = '<p style="color:#8C3A2A">שגיאה. נסי לרענן.</p>';
+    document.getElementById('state-loading').innerHTML = '<p style="color:#8C3A2A">×©××××. × ×¡× ××¨×¢× ×.</p>';
   }
 }
 
@@ -218,24 +235,24 @@ function renderIbox(all, mid, senior) {
     const chip = (lbl, cur, min, ok) =>
       '<div class="pchip"><span class="pchip-label">' + lbl + '</span>' +
       '<span class="pchip-num ' + (ok?'ok':'low') + '">' + cur + ' / ' + min + '</span>' +
-      '<span class="pchip-note" style="color:' + (ok?'var(--accent)':'var(--amber)') + '">' + (ok ? '✓ הושג' : 'חסרים עוד ' + (min-cur)) + '</span></div>';
-    el.innerHTML = '<div style="font-size:13px;color:var(--muted);margin-bottom:0.75rem;">הניתוח יופיע לאחר שיושלם מספר מינימלי של שאלונים:</div>' +
-      '<div class="pchips">' + chip('דרג המנהלים המשתתפים', mid.length, MIN_MID, midOk) + '</div>';
+      '<span class="pchip-note" style="color:' + (ok?'var(--accent)':'var(--amber)') + '">' + (ok ? 'â ×××©×' : '××¡×¨×× ×¢×× ' + (min-cur)) + '</span></div>';
+    el.innerHTML = '<div style="font-size:13px;color:var(--muted);margin-bottom:0.75rem;">×× ××ª×× ×××¤××¢ ××××¨ ×©×××©×× ××¡×¤×¨ ××× ×××× ×©× ×©×××× ××:</div>' +
+      '<div class="pchips">' + chip('××¨× ××× ×××× ×××©×ª×ª×¤××', mid.length, MIN_MID, midOk) + '</div>';
     return;
   }
-  el.innerHTML = '<button class="btn-gen" onclick="genPrompt(\'program\')">✦ תובנות לתוכנית</button><button class="btn-gen" onclick="genPrompt(\'levels\')">✦ תובנות על הדרגים</button>';
+  el.innerHTML = '<button class="btn-gen" onclick="genPrompt(\'program\')">â¦ ×ª××× ××ª ××ª××× ××ª</button><button class="btn-gen" onclick="genPrompt(\'levels\')">â¦ ×ª××× ××ª ×¢× ×××¨×××</button>';
 }
 
 function buildText(group) {
   return group.map(r => {
-    const lv = r.manager.level === 'mid' ? 'דרג מנהלים' : 'דרג בכיר';
-    const lines = ['מנהל/ת: ' + r.manager.name + ' (' + lv + ')'];
+    const lv = r.manager.level === 'mid' ? '××¨× ×× ××××' : '××¨× ××××¨';
+    const lines = ['×× ××/×ª: ' + r.manager.name + ' (' + lv + ')'];
     Object.entries(r.answers || {}).forEach(([k, v]) => {
       if (!v) return;
       if (typeof v === 'object' && !Array.isArray(v)) {
         const lbls = r.questionLabels && r.questionLabels[k] ? r.questionLabels[k] : {};
-        const rows = Object.entries(v).map(([i,s]) => '  ' + (lbls[i] || 'נושא '+(parseInt(i)+1)) + ': ' + s + '/5').join('\n');
-        lines.push('דירוג:\n' + rows);
+        const rows = Object.entries(v).map(([i,s]) => '  ' + (lbls[i] || '× ××©× '+(parseInt(i)+1)) + ': ' + s + '/5').join('\n');
+        lines.push('×××¨××:\n' + rows);
       } else {
         lines.push((QL[k]||k) + ': ' + v);
       }
@@ -245,20 +262,20 @@ function buildText(group) {
 }
 
 function genPrompt(type) {
-  const org = ALL[0].manager.org || 'הארגון';
+  const org = ALL[0].manager.org || '×××¨×××';
   const mid = ALL.filter(r => r.manager.level === 'mid');
   const senior = ALL.filter(r => r.manager.level === 'senior');
   let p = '';
   if (type === 'program') {
-    p = 'אתה יועצת ארגונית מנוסה המתמחה בפיתוח מנהלים. להלן תשובות שאלוני אבחון מ-' + ALL.length + ' מנהלים ב' + org + '.\n\n' +
-'כתבי המלצות לתוכנית פיתוח מנהלים בהתבסס על הנתונים. הציעי פורמטים שאולי לא חשבו עליהם — כגון: מנהלים בכירים שמגיעים לדבר עם הקבוצה, פרויקטים משותפים, למידה מהצלחות פנימיות, קבוצות עמיתים, חניכה הדדית, ועוד.\nכתבי המלצות ספציפיות ומעשיות בלבד.\n\n' +
-'## תכנים מרכזיים לתוכנית\n## פורמטים מומלצים (כולל לא שגרתיים)\n## שילוב הדרג הבכיר בתוכנית\n## נקודות זהירות\n\n' +
-'להלן הנתונים:\n' + buildText(ALL);
+    p = '××ª× ×××¢×¦×ª ××¨××× ××ª ×× ××¡× ×××ª××× ××¤××ª×× ×× ××××. ×××× ×ª×©××××ª ×©×××× × ××××× ×-' + ALL.length + ' ×× ×××× ×' + org + '.\n\n' +
+'××ª×× ××××¦××ª ××ª××× ××ª ×¤××ª×× ×× ×××× ×××ª××¡×¡ ×¢× ×× ×ª×× ××. ××¦××¢× ×¤××¨×××× ×©×××× ×× ××©×× ×¢×××× â ××××: ×× ×××× ××××¨×× ×©××××¢×× ××××¨ ×¢× ××§×××¦×, ×¤×¨×××§××× ××©××ª×¤××, ××××× ×××¦××××ª ×¤× ×××××ª, ×§×××¦××ª ×¢×××ª××, ×× ××× ×××××ª, ××¢××.\n××ª×× ××××¦××ª ×¡×¤×¦××¤×××ª ×××¢×©×××ª ××××.\n\n' +
+'## ×ª×× ×× ××¨××××× ××ª××× ××ª\n## ×¤××¨×××× ×××××¦×× (×××× ×× ×©××¨×ª×××)\n## ×©×××× ×××¨× ×××××¨ ××ª××× ××ª\n## × ×§××××ª ××××¨××ª\n\n' +
+'×××× ×× ×ª×× ××:\n' + buildText(ALL);
   } else {
-    p = 'אתה יועצת ארגונית מנוסה. להלן תשובות שאלוני אבחון מ' + org + '.\nכתבי ניתוח נפרד לכל דרג. תובנות ספציפיות בלבד.\n\n' +
-'## דרג המנהלים המשתתפים (' + mid.length + ' משיבים)\n### חוזקות ניהוליות בולטות\n### תחומים הדורשים חיזוק\n### דפוסים ניהוליים חוזרים\n### אלמנטים תרבותיים שיכולים לסייע\n\n---\n\n' +
-'## דרג המנהלים הבכירים (' + senior.length + ' משיבים)\n### חוזקות ניהוליות בולטות\n### תחומים הדורשים חיזוק\n### כיצד הם נתפסים על ידי הדרג שמתחתיהם\n### המלצה לדרג הבכיר\n\n---\n\n' +
-'נתוני דרג המנהלים המשתתפים:\n' + buildText(mid) + '\n\nנתוני דרג המנהלים הבכירים:\n' + buildText(senior);
+    p = '××ª× ×××¢×¦×ª ××¨××× ××ª ×× ××¡×. ×××× ×ª×©××××ª ×©×××× × ××××× ×' + org + '.\n××ª×× × ××ª×× × ×¤×¨× ××× ××¨×. ×ª××× ××ª ×¡×¤×¦××¤×××ª ××××.\n\n' +
+'## ××¨× ××× ×××× ×××©×ª×ª×¤×× (' + mid.length + ' ××©××××)\n### ××××§××ª × ×××××××ª ××××××ª\n### ×ª××××× ××××¨×©×× ×××××§\n### ××¤××¡×× × ××××××× ××××¨××\n### ×××× ××× ×ª×¨×××ª××× ×©×××××× ××¡×××¢\n\n---\n\n' +
+'## ××¨× ××× ×××× ×××××¨×× (' + senior.length + ' ××©××××)\n### ××××§××ª × ×××××××ª ××××××ª\n### ×ª××××× ××××¨×©×× ×××××§\n### ×××¦× ×× × ×ª×¤×¡×× ×¢× ××× ×××¨× ×©××ª××ª×××\n### ××××¦× ×××¨× ×××××¨\n\n---\n\n' +
+'× ×ª×× × ××¨× ××× ×××× ×××©×ª×ª×¤××:\n' + buildText(mid) + '\n\n× ×ª×× × ××¨× ××× ×××× ×××××¨××:\n' + buildText(senior);
   }
   document.getElementById('pbox').textContent = p;
   document.getElementById('pbox').style.display = 'block';
@@ -268,8 +285,8 @@ function genPrompt(type) {
 function copyP() {
   navigator.clipboard.writeText(document.getElementById('pbox').textContent).then(() => {
     const btn = document.getElementById('btn-cp');
-    btn.textContent = '✓ הועתק! פתחי שיחה חדשה ב-Claude.ai והדביקי';
-    setTimeout(() => { btn.textContent = 'העתק ← הדביקי ב-Claude.ai בשיחה חדשה'; }, 3000);
+    btn.textContent = 'â ×××¢×ª×§! ×¤×ª×× ×©××× ×××©× ×-Claude.ai ××××××§×';
+    setTimeout(() => { btn.textContent = '××¢×ª×§ â ×××××§× ×-Claude.ai ××©××× ×××©×'; }, 3000);
   });
 }
 
@@ -278,7 +295,7 @@ function kws(responses, field) {
   responses.forEach(r => {
     const v = r.answers && r.answers[field];
     if (typeof v !== 'string') return;
-    v.replace(/[.,!?;:״׳"'()[\]]/g,'').split(/\s+/).forEach(w => {
+    v.replace(/[.,!?;:×´×³"'()[\]]/g,'').split(/\s+/).forEach(w => {
       if (w.length > 2 && !STOP.has(w)) freq[w] = (freq[w]||0) + 1;
     });
   });
@@ -288,7 +305,7 @@ function kws(responses, field) {
 function renderKW(id, responses, field, cls) {
   const el = document.getElementById(id);
   const k = kws(responses, field);
-  el.innerHTML = k.length ? k.map(([w,c])=>'<span class="kt '+cls+'" style="font-size:'+Math.min(15,10+c*1.2)+'px">'+w+'</span>').join('') : '<span style="font-size:13px;color:var(--light)">אין נתונים</span>';
+  el.innerHTML = k.length ? k.map(([w,c])=>'<span class="kt '+cls+'" style="font-size:'+Math.min(15,10+c*1.2)+'px">'+w+'</span>').join('') : '<span style="font-size:13px;color:var(--light)">××× × ×ª×× ××</span>';
 }
 
 function renderVisuals(all, mid, senior) {
@@ -297,14 +314,14 @@ function renderVisuals(all, mid, senior) {
 
   CHS.d = new Chart(document.getElementById('ch-donut').getContext('2d'), {
     type:'doughnut',
-    data:{ labels:['דרג מנהלים','דרג בכיר'], datasets:[{ data:[mid.length,senior.length], backgroundColor:['#1A4A6B','#2D5A3D'], borderWidth:0 }] },
+    data:{ labels:['××¨× ×× ××××','××¨× ××××¨'], datasets:[{ data:[mid.length,senior.length], backgroundColor:['#1A4A6B','#2D5A3D'], borderWidth:0 }] },
     options:{ cutout:'70%', plugins:{ legend:{ display:false } }, responsive:true, maintainAspectRatio:false }
   });
 
   document.getElementById('donut-leg').innerHTML =
     '<div style="display:flex;flex-direction:column;gap:12px;">' +
-    '<div style="display:flex;align-items:center;gap:10px;"><div style="width:12px;height:12px;border-radius:50%;background:#1A4A6B;flex-shrink:0"></div><div><div style="font-size:13px;font-weight:500;color:var(--muted)">דרג המנהלים המשתתפים</div><div style="font-size:24px;font-weight:300">'+mid.length+' משיבים</div></div></div>' +
-    '<div style="display:flex;align-items:center;gap:10px;"><div style="width:12px;height:12px;border-radius:50%;background:#2D5A3D;flex-shrink:0"></div><div><div style="font-size:13px;font-weight:500;color:var(--muted)">דרג המנהלים הבכירים</div><div style="font-size:24px;font-weight:300">'+senior.length+' משיבים</div></div></div>' +
+    '<div style="display:flex;align-items:center;gap:10px;"><div style="width:12px;height:12px;border-radius:50%;background:#1A4A6B;flex-shrink:0"></div><div><div style="font-size:13px;font-weight:500;color:var(--muted)">××¨× ××× ×××× ×××©×ª×ª×¤××</div><div style="font-size:24px;font-weight:300">'+mid.length+' ××©××××</div></div></div>' +
+    '<div style="display:flex;align-items:center;gap:10px;"><div style="width:12px;height:12px;border-radius:50%;background:#2D5A3D;flex-shrink:0"></div><div><div style="font-size:13px;font-weight:500;color:var(--muted)">××¨× ××× ×××× ×××××¨××</div><div style="font-size:24px;font-weight:300">'+senior.length+' ××©××××</div></div></div>' +
     '</div>';
 
   renderKW('kw-s', all, 'success', 'kg');
@@ -313,14 +330,14 @@ function renderVisuals(all, mid, senior) {
   renderKW('kw-sh', all, 'senior_helps', 'kg');
   renderKW('kw-sb', all, 'senior_blocks', 'kr');
 
-  const rlbls = ['חוזקות','אתגרים','תרבות','תמיכת\nדרג בכיר','חסמי\nדרג בכיר'];
+  const rlbls = ['××××§××ª','××ª××¨××','×ª×¨×××ª','×ª××××ª\n××¨× ××××¨','××¡××\n××¨× ××××¨'];
   const flds = ['success','challenges','culture','senior_helps','senior_blocks'];
   const rd = g => flds.map(f => g.length===0?0:Math.min(10,Math.round(g.reduce((s,r)=>s+(typeof r.answers?.[f]==='string'?r.answers[f].length/25:0),0)/g.length*2)));
 
   const mkRadar = (id, data, color) => {
     const el = document.getElementById(id);
     if (!el) return;
-    if (data.every(v=>v===0)) { el.parentElement.innerHTML='<p style="font-size:13px;color:var(--light);text-align:center;padding:2rem;">אין נתונים לדרג זה</p>'; return; }
+    if (data.every(v=>v===0)) { el.parentElement.innerHTML='<p style="font-size:13px;color:var(--light);text-align:center;padding:2rem;">××× × ×ª×× ×× ×××¨× ××</p>'; return; }
     CHS[id] = new Chart(el.getContext('2d'), {
       type:'radar',
       data:{ labels:rlbls, datasets:[{ data, backgroundColor:color+'22', borderColor:color, borderWidth:2, pointBackgroundColor:color, pointRadius:3 }] },
@@ -332,7 +349,7 @@ function renderVisuals(all, mid, senior) {
 
   const cEl = document.getElementById('changes');
   const ch = all.map(r=>({ name:r.manager.name, level:r.manager.level, text:(r.answers&&r.answers.change)||'' })).filter(c=>c.text);
-  cEl.innerHTML = ch.map(c=>'<div class="irow"><div class="idot" style="background:'+(c.level==='mid'?'#1A4A6B':'#2D5A3D')+'"></div><div class="itext"><strong style="font-size:12px;color:var(--muted)">'+c.name+' · '+(c.level==='mid'?'דרג מנהלים':'דרג בכיר')+'</strong><br>'+c.text+'</div></div>').join('') || '<p style="font-size:13px;color:var(--light)">אין נתונים</p>';
+  cEl.innerHTML = ch.map(c=>'<div class="irow"><div class="idot" style="background:'+(c.level==='mid'?'#1A4A6B':'#2D5A3D')+'"></div><div class="itext"><strong style="font-size:12px;color:var(--muted)">'+c.name+' Â· '+(c.level==='mid'?'××¨× ×× ××××':'××¨× ××××¨')+'</strong><br>'+c.text+'</div></div>').join('') || '<p style="font-size:13px;color:var(--light)">××× × ×ª×× ××</p>';
 }
 
 function renderRatings(all, mid, senior) {
@@ -362,15 +379,15 @@ function renderRatings(all, mid, senior) {
     const d = rd[qId];
     const idxs = Object.keys(d.a).map(Number).sort((a,b)=>a-b);
     if (!idxs.length) return;
-    const labels = idxs.map(i=>d.lbls[i]||'נושא '+(i+1));
-    const ds = [{ label:'כלל המשיבים', data:idxs.map(i=>avg(d.a[i])), backgroundColor:'#4A4A8C33', borderColor:'#4A4A8C', borderWidth:2 }];
-    if (mid.length) ds.push({ label:'דרג מנהלים', data:idxs.map(i=>avg(d.m[i])), backgroundColor:'#1A4A6B33', borderColor:'#1A4A6B', borderWidth:2 });
-    if (senior.length) ds.push({ label:'דרג בכיר', data:idxs.map(i=>avg(d.s[i])), backgroundColor:'#2D5A3D33', borderColor:'#2D5A3D', borderWidth:2 });
+    const labels = idxs.map(i=>d.lbls[i]||'× ××©× '+(i+1));
+    const ds = [{ label:'××× ×××©××××', data:idxs.map(i=>avg(d.a[i])), backgroundColor:'#4A4A8C33', borderColor:'#4A4A8C', borderWidth:2 }];
+    if (mid.length) ds.push({ label:'××¨× ×× ××××', data:idxs.map(i=>avg(d.m[i])), backgroundColor:'#1A4A6B33', borderColor:'#1A4A6B', borderWidth:2 });
+    if (senior.length) ds.push({ label:'××¨× ××××¨', data:idxs.map(i=>avg(d.s[i])), backgroundColor:'#2D5A3D33', borderColor:'#2D5A3D', borderWidth:2 });
     const panel = document.createElement('div');
     panel.className = 'panel';
     const cid = 'rt_'+qId;
     const h = Math.max(220, idxs.length*42);
-    panel.innerHTML = '<div class="panel-title"><span class="pdot" style="background:#4A4A8C"></span>ממוצע דירוג לפי נושא (סולם 1–5)</div><div style="position:relative;height:'+h+'px;"><canvas id="'+cid+'"></canvas></div>';
+    panel.innerHTML = '<div class="panel-title"><span class="pdot" style="background:#4A4A8C"></span>××××¦×¢ ×××¨×× ××¤× × ××©× (×¡××× 1â5)</div><div style="position:relative;height:'+h+'px;"><canvas id="'+cid+'"></canvas></div>';
     cont.appendChild(panel);
     CHS[cid] = new Chart(document.getElementById(cid).getContext('2d'), {
       type:'bar', data:{ labels, datasets:ds },
@@ -385,7 +402,7 @@ function renderResponses(all) {
   all.forEach(r => {
     const div = document.createElement('div');
     div.className = 'rc';
-    const ll = r.manager.level==='mid'?'דרג מנהלים':'דרג בכיר';
+    const ll = r.manager.level==='mid'?'××¨× ×× ××××':'××¨× ××××¨';
     const bc = r.manager.level==='mid'?'bdg-mid':'bdg-senior';
     let qa = '';
     Object.entries(r.answers||{}).forEach(([k,v]) => {
@@ -393,7 +410,7 @@ function renderResponses(all) {
       let aHtml = '';
       if (typeof v==='object'&&!Array.isArray(v)) {
         const lbls = (r.questionLabels&&r.questionLabels[k]) ? r.questionLabels[k] : {};
-        aHtml = Object.entries(v).map(([i,s])=>'<span style="font-size:12px;background:var(--bg);padding:2px 8px;border-radius:4px;margin-left:6px;">'+(lbls[i]||'נושא '+(parseInt(i)+1))+': <b>'+s+'</b>/5</span>').join('');
+        aHtml = Object.entries(v).map(([i,s])=>'<span style="font-size:12px;background:var(--bg);padding:2px 8px;border-radius:4px;margin-left:6px;">'+(lbls[i]||'× ××©× '+(parseInt(i)+1))+': <b>'+s+'</b>/5</span>').join('');
       } else { aHtml = String(v); }
       qa += '<div class="rqa"><div class="rq">'+(QL[k]||k)+'</div><div class="ra">'+aHtml+'</div></div>';
     });
@@ -410,6 +427,37 @@ function switchTab(id, e) {
 }
 
 loadData();
+
+async function loadInsights() {
+  const sections = {
+    'kw-s': 'chozakot',
+    'kw-c': 'etgarim',
+    'kw-cu': 'tarbut',
+    'kw-sh': 'bakhir_totem',
+    'kw-sb': 'bakhir_meakev'
+  };
+  Object.keys(sections).forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.insertAdjacentHTML('beforeend', '<div class="insight-loading">טוען תובנות AI...</div>');
+  });
+  try {
+    const res = await fetch('/api/insights?org=' + encodeURIComponent(orgCode));
+    const data = await res.json();
+    if (data.error) { Object.keys(sections).forEach(id => { const el = document.getElementById(id); if(el) { const l = el.querySelector('.insight-loading'); if(l) l.remove(); }}); return; }
+    Object.entries(sections).forEach(([id, key]) => {
+      const el = document.getElementById(id);
+      if (el && data[key]) {
+        const loader = el.querySelector('.insight-loading');
+        if (loader) loader.remove();
+        el.insertAdjacentHTML('beforeend', '<div class="insight-box">' + data[key] + '</div>');
+      }
+    });
+    const changesEl = document.getElementById('kw-changes') || document.getElementById('changes');
+    if (changesEl && data.hamlatzot) {
+      changesEl.insertAdjacentHTML('beforeend', '<div class="insight-box">' + data.hamlatzot + '</div>');
+    }
+  } catch(e) { console.error('insights error', e); }
+}
 </script>
 </body>
 </html>
