@@ -39,7 +39,7 @@ export default async function handler(req, res) {
     const prompt = `אתה יועץ ארגוני מומחה. להלן תשובות שאלוני אבחון מ-${responses.length} מנהלים:\n\n${formatted}\n\nנתח לעומק והחזר JSON בלבד (ללא טקסט נוסף):\n{\n  "chozakot": "תובנה ממוקדת על חוזקות הצוות המרכזיות",\n  "etgarim": "תובנה על האתגרים המשמעותיים",\n  "tarbut": "תובנה על התרבות הארגונית",\n  "bakhir_totem": "מה הדרג הבכיר תורם לפי המנהלים",\n  "bakhir_meakev": "מה הדרג הבכיר מעכב לפי המנהלים",\n  "hashvaah": "הבדלים מרכזיים בין הדרגים",\n  "hamlatzot": "2-3 המלצות פעולה קונקרטיות"\n}`;
 
     const geminiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
