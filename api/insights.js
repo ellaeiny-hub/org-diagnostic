@@ -52,7 +52,7 @@ export default async function handler(req, res) {
 
     const gData = await geminiRes.json();
     const text = gData.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (!text) return res.status(500).json({ error: 'gemini_failed' });
+    if (!text) return res.status(500).json({ error: 'gemini_failed', key_set: !!GEMINI_KEY, gemini: gData });
 
     return res.status(200).json(JSON.parse(text));
 
